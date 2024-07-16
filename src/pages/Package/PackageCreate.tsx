@@ -12,7 +12,8 @@ import {
     AccordionBody
 } from "@material-tailwind/react";
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { formDataWithToken, getData } from '../../utils';
+import { base_url, getData } from '../../utils';
+import axios from 'axios';
 
 const PackageCreate: React.FC = () => {
     const scrollToRef = React.useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ const PackageCreate: React.FC = () => {
     const [data, setFormData] = React.useState<FormData>(new FormData());
     const [message, setMessage] = useState<string>('');
     const [status, setStatus] = useState<string>('');
-    const [files, setFiles] = useState<FileList>();
+    const [images, setImages] = useState<File[]>([]);
     const handledata = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => {
@@ -48,9 +49,9 @@ const PackageCreate: React.FC = () => {
             return newFormData; // Return the updated FormData
         });
     }
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFiles(e.target.files);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setImages(Array.from(event.target.files));
         }
     };
     const getdestinations = async () => {
@@ -83,31 +84,29 @@ const PackageCreate: React.FC = () => {
         }
         setMOpen(false)
     }
-    interface ApiResponse {
-        message: string;
-        success: string;
-    }
+    // interface ApiResponse {
+    //     message: string;
+    //     success: string;
+    // }
     const handleSubmit = async () => {
-
         try {
             const newFormData = new FormData();
             data.forEach((value, key) => {
                 newFormData.append(key, value);
             });
             newFormData.append('about', editorData);
-            if (files) {
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    newFormData.append('files', file);
-                }
+            if (images.length > 0) {
+                images.forEach((file) => {
+                    newFormData.append('images', file);
+                });
             }
-
-
-
             newFormData.append('inclusion', inclusion);
             newFormData.append('exclusion', exclusion);
             newFormData.append('itinerary', JSON.stringify(itines));
-            const resp: ApiResponse = await formDataWithToken('package', data)
+
+            const response = await axios.post(base_url + 'api/v1/package', newFormData);
+            const resp = response.data;
+
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
@@ -115,11 +114,11 @@ const PackageCreate: React.FC = () => {
                     scrollToRef.current.scrollIntoView({ block: 'start' });
                 }
             }, 0);
-
         } catch (error) {
             console.error('Error uploading data:', error); // Handle error
         }
     };
+
     useEffect(() => {
         getdestinations();
     }, []);
