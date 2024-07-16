@@ -87,7 +87,7 @@ export const formDataWithToken = async (
     console.log('Token:', token);
 
     // Check if the token is well-formed (basic validation)
-    if (!token || token.split('.').length !== 3) {
+    if (!token) {
         throw new Error('Invalid Token: Token is not properly formatted');
     }
 

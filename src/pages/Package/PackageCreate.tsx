@@ -36,6 +36,7 @@ const PackageCreate: React.FC = () => {
     const [data, setFormData] = React.useState<FormData>(new FormData());
     const [message, setMessage] = useState<string>('');
     const [status, setStatus] = useState<string>('');
+    const [files, setFiles] = useState<FileList>();
     const handledata = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => {
@@ -48,18 +49,8 @@ const PackageCreate: React.FC = () => {
         });
     }
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { files } = e.target;
-        if (files && files.length > 0) {
-            setFormData((prev) => {
-                const newFormData = new FormData(); // Create a new FormData instance
-                for (const [key, val] of prev.entries()) { // Copy existing entries from prev
-                    newFormData.append(key, val);
-                }
-                for (let i = 0; i < files.length; i++) {
-                    newFormData.append('images', files[i]); // Append each selected file
-                }
-                return newFormData; // Return the updated FormData
-            });
+        if (e.target.files) {
+            setFiles(e.target.files);
         }
     };
     const getdestinations = async () => {
@@ -104,6 +95,15 @@ const PackageCreate: React.FC = () => {
                 newFormData.append(key, value);
             });
             newFormData.append('about', editorData);
+            if (files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    newFormData.append('files', file);
+                }
+            }
+
+
+
             newFormData.append('inclusion', inclusion);
             newFormData.append('exclusion', exclusion);
             newFormData.append('itinerary', JSON.stringify(itines));
@@ -215,7 +215,7 @@ const PackageCreate: React.FC = () => {
                         </div>
                         <div className="col-span-1">
                             <Label title='Upload Images & Videos' hfor={'file'} />
-                            <input type="file" id="file" onChange={handleFileChange} placeholder='Upload Images' className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
+                            <input type="file" id="file" onChange={handleFileChange} placeholder='Upload Images' multiple className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
                         </div>
                         <div className="col-span-1">
                             <div className="w-full">
