@@ -12,8 +12,7 @@ import {
     AccordionBody
 } from "@material-tailwind/react";
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { base_url, getData } from '../../utils';
-import axios from 'axios';
+import { formDataWithToken, getData } from '../../utils';
 
 const PackageCreate: React.FC = () => {
     const scrollToRef = React.useRef<HTMLDivElement>(null);
@@ -28,7 +27,6 @@ const PackageCreate: React.FC = () => {
     const [editorData, setEditorData] = React.useState<string>('');
     const [inclusion, setInclusion] = React.useState<string>('');
     const [exclusion, setExclusion] = React.useState<string>('')
-    const [pricetype, setPriceType] = useState<string>('');
     const [itines, setItinies] = React.useState<Itiny[]>([]);
     const [inity, setInity] = React.useState<Itiny>();
     const [mopen, setMOpen] = React.useState(false);
@@ -37,7 +35,9 @@ const PackageCreate: React.FC = () => {
     const [data, setFormData] = React.useState<FormData>(new FormData());
     const [message, setMessage] = useState<string>('');
     const [status, setStatus] = useState<string>('');
-    const [images, setImages] = useState<File[]>([]);
+    const [images, setImages] = React.useState<File[]>([]);
+    const [pdf, setPDF] = React.useState<File>();
+    const [banner, setBanner] = React.useState<File>();
     const handledata = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => {
@@ -49,9 +49,22 @@ const PackageCreate: React.FC = () => {
             return newFormData; // Return the updated FormData
         });
     }
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            setImages(Array.from(event.target.files));
+    const handlebannerchange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (files) {
+            setBanner(files[0]);
+        }
+    };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (files && files.length > 0) {
+            setImages(Array.from(files));
+        }
+    };
+    const handlepdfchange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (files) {
+            setPDF(files[0]);
         }
     };
     const getdestinations = async () => {
@@ -84,29 +97,36 @@ const PackageCreate: React.FC = () => {
         }
         setMOpen(false)
     }
-    // interface ApiResponse {
-    //     message: string;
-    //     success: string;
-    // }
+    interface ApiResponse {
+        message: string;
+        success: string;
+    }
+
     const handleSubmit = async () => {
+
         try {
             const newFormData = new FormData();
             data.forEach((value, key) => {
                 newFormData.append(key, value);
             });
-            newFormData.append('about', editorData);
             if (images.length > 0) {
-                images.forEach((file) => {
-                    newFormData.append('images', file);
-                });
+                images.forEach(fil => {
+                    newFormData.append('images', fil);
+                })
             }
+            if (banner) {
+                newFormData.append('banner', banner)
+            }
+            if (pdf) {
+                newFormData.append('pdfs', pdf)
+            }
+            newFormData.append('about', editorData);
+
             newFormData.append('inclusion', inclusion);
             newFormData.append('exclusion', exclusion);
             newFormData.append('itinerary', JSON.stringify(itines));
 
-            const response = await axios.post(base_url + 'api/v1/package', newFormData);
-            const resp = response.data;
-
+            const resp: ApiResponse = await formDataWithToken('package', newFormData)
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
@@ -114,11 +134,11 @@ const PackageCreate: React.FC = () => {
                     scrollToRef.current.scrollIntoView({ block: 'start' });
                 }
             }, 0);
+
         } catch (error) {
             console.error('Error uploading data:', error); // Handle error
         }
     };
-
     useEffect(() => {
         getdestinations();
     }, []);
@@ -174,6 +194,7 @@ const PackageCreate: React.FC = () => {
                                 <input type='text' onChange={handledata} className='w-full p-2 border border-blue-gray-200' placeholder='Enter Package title' />
                             </div>
                         </div>
+
                         <div className="col-span-1">
                             <div className="w-full">
                                 <label className='form-label text-secondary' htmlFor="destination">Select Destination</label>
@@ -189,12 +210,7 @@ const PackageCreate: React.FC = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="col-span-1">
-                            <div className="w-full">
-                                <Label title={'Travel  Country'} hfor={'country'} />
-                                <input type="text" onChange={handledata} name="country" placeholder='Country Name' className=" w-full px-2 py-1 text-start text-sm border rounded border-blue-gray-200 outline-none" />
-                            </div>
-                        </div>
+
                         <div className="col-span-1">
                             <label className='form-label text-secondary' htmlFor="duration">Duration</label>
                             <div className="flex w-full gap-2">
@@ -213,8 +229,16 @@ const PackageCreate: React.FC = () => {
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <Label title='Upload Images & Videos' hfor={'file'} />
-                            <input type="file" id="file" onChange={handleFileChange} placeholder='Upload Images' multiple className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
+                            <Label title='Upload Banner Image' hfor={'file'} />
+                            <input placeholder='Enter image' type="file" accept='.jpg, .png, .jpeg' onChange={handlebannerchange} className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
+                        </div>
+                        <div className="col-span-1">
+                            <Label title='Upload PDF Itinerary' hfor={'file'} />
+                            <input placeholder='Enter image' type="file" accept='.pdf, .PDF' onChange={handlepdfchange} className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
+                        </div>
+                        <div className="col-span-1">
+                            <Label title='Upload Gallery Images' hfor={'file'} />
+                            <input type="file" id="file" multiple onChange={handleFileChange} placeholder='Upload Images' className=" w-full px-2 py-1 text-center text-sm border rounded border-blue-gray-200 outline-none" />
                         </div>
                         <div className="col-span-1">
                             <div className="w-full">
@@ -226,45 +250,19 @@ const PackageCreate: React.FC = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-1">
                             <div className="w-full">
                                 <Label title={'Price'} hfor={'price'} />
-                                <div className="flex ">
-                                    <select name="price_by" id="pricefor" onChange={(e) => setPriceType(e.target.value)} className="w-24 border border-blue-gray-200  text-xs rounded-s  p-2 outline-none">
-                                        <option value="">--Select--- </option>
-                                        <option value="per_head">Per Head</option>
-                                        <option value="overall">Overall</option>
-                                    </select>
-                                    {
-                                        pricetype == "overall" ? (<>
-                                            <input type="text" id="price" name="over_all_price" onChange={handledata} placeholder='Enter price' className=" w-full  px-2 py-1 text-start text-sm border rounded-e  border-blue-gray-200 border-s-0 outline-none" />
-
-                                        </>) : (
-                                            <>
-                                                <div className="flex w-full gap-2 ms-3">
-                                                    <div className='flex w-1/3 rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                                        <input type="number" placeholder='Per Adult' name="per_adult" onChange={handledata} id="" className="h-8 w-full px-1  text-center text-sm border-e border-blue-gray-200 outline-none" />
-                                                        <span className='inline-block h-8  text-center px-2 leading-8 bg-yellow-200 text-black'>Adult</span>
-                                                    </div>
-                                                    <div className='flex w-1/3  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                                        <input type="number" placeholder='Per Child' name="per_child" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
-                                                        <span className='inline-block h-8  text-center px-2 leading-8  bg-gray-500 text-white'>Child</span>
-                                                    </div>
-                                                    <div className='flex w-1/3  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                                        <input type="number" placeholder='Per infant' name="per_infant" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
-                                                        <span className='inline-block h-8  text-center px-2 leading-8  bg-primary text-white'>Infant</span>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        )
-                                    }
+                                <div className="block ">
+                                    <input type="text" id="price" name="over_all_price" onChange={handledata} placeholder='Enter price' className=" w-full  px-2 py-1 text-start text-sm border rounded border-blue-gray-200 outline-none" />
                                 </div>
                             </div>
                         </div>
                         <div className="col-span-4 ">
                             <button onClick={handleMOpen} className='text-sm bg-gray-300 hover:bg-gray-400 px-4 uppercase font-light tracking-widest py-2 rounded-lg shadow-lg  text-black'>
                                 <PlusCircleOutlined className='me-2 text-gray-600' />
-                                Add Itinerary</button>
+                                Add Itinerary
+                            </button>
                         </div>
                         <div className="col-span-4">
                             <Label title={'All Itinerary'} hfor={null} />

@@ -3,14 +3,11 @@ import './App.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import Layout from './layout/Layout'
 import Home from './pages/Home'
-// import CreateCategory from './pages/Category/CreateCategory'
-
 import CreateBanner from './pages/banner/CreateBanner'
 import CreateTestimonial from './pages/testimonial/CreateTestimonial'
 import ContactDetails from './pages/contact_details'
 import CreatePolicy from './pages/policy/CreatePolicy'
 import Login from './pages/Login'
-
 import PromoCodes from './pages/PromoCode'
 import SubCategory from './pages/SubCategory'
 import Offer from './pages/Offer'
@@ -36,9 +33,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path='/dashboard' element={<Home />} />
           <Route path='/countries' element={<Country />} />
-
           <Route path='/banner' element={<CreateBanner />} />
-
           <Route path='/testimonial' element={<CreateTestimonial />} />
           <Route path='/contact-details' element={<ContactDetails />} />
           <Route path='/policy' element={<CreatePolicy />} />
@@ -49,11 +44,8 @@ function App() {
           <Route path='/faq/create' element={<CreateFaq />} />
           <Route path='/faq' element={<ViewFaq />} />
           <Route path='/destinations-view' element={<ViewCountry />} />
-
           <Route path='/packages' element={<ViewPackages />} />
           <Route path='/packages/create' element={<PackageCreate />} />
-
-
         </Route>
       </>
     )
