@@ -25,6 +25,7 @@ const PackageCreate: React.FC = () => {
         title: string;
     }
     const [editorData, setEditorData] = React.useState<string>('');
+    const [title, setTitle] = React.useState<string>('');
     const [inclusion, setInclusion] = React.useState<string>('');
     const [exclusion, setExclusion] = React.useState<string>('')
     const [itines, setItinies] = React.useState<Itiny[]>([]);
@@ -32,22 +33,28 @@ const PackageCreate: React.FC = () => {
     const [mopen, setMOpen] = React.useState(false);
     const [open, setOpen] = React.useState(0);
     const [destinations, setDestinations] = useState<Destination[]>([]);
-    const [data, setFormData] = React.useState<FormData>(new FormData());
+    const [destination, setDestination] = useState<string>('')
+    const [days, setDays] = useState<number>(0)
+    const [nights, setNights] = useState<number>(0)
+    const [pax, setPax] = useState<number>(0);
+    const [packageType, setPackageType] = useState<string>('')
     const [message, setMessage] = useState<string>('');
     const [status, setStatus] = useState<string>('');
     const [images, setImages] = React.useState<File[]>([]);
     const [pdf, setPDF] = React.useState<File>();
     const [banner, setBanner] = React.useState<File>();
+    const [price, setPrice] = React.useState<number>(0)
     const handledata = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => {
-            const newFormData = new FormData(); // Create a new FormData instance
-            for (const [key, val] of prev.entries()) { // Copy existing entries from prev
-                newFormData.append(key, val);
-            }
-            newFormData.set(name, value); // Set the new value for the specific input
-            return newFormData; // Return the updated FormData
-        });
+        if (name == "days") {
+            setDays(parseInt(value));
+        }
+        if (name == "nights") {
+            setNights(parseInt(value));
+        }
+        if (name == "pax") {
+            setPax(parseInt(value));
+        }
     }
     const handlebannerchange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
@@ -103,30 +110,42 @@ const PackageCreate: React.FC = () => {
     }
 
     const handleSubmit = async () => {
-
         try {
             const newFormData = new FormData();
-            data.forEach((value, key) => {
-                newFormData.append(key, value);
-            });
-            if (images.length > 0) {
+
+            if (images && images.length > 0) {
                 images.forEach(fil => {
                     newFormData.append('images', fil);
-                })
+                });
+            } else {
+                newFormData.append('images', '');
             }
+
             if (banner) {
-                newFormData.append('banner', banner)
+                newFormData.append('banner', banner);
+            } else {
+                newFormData.append('banner', '');
             }
+
             if (pdf) {
-                newFormData.append('pdfs', pdf)
+                newFormData.append('pdfs', pdf);
+            } else {
+                newFormData.append('pdfs', '');
             }
-            newFormData.append('about', editorData);
 
-            newFormData.append('inclusion', inclusion);
-            newFormData.append('exclusion', exclusion);
-            newFormData.append('itinerary', JSON.stringify(itines));
+            newFormData.append('about', editorData || '');
+            newFormData.append('title', title || '');
+            newFormData.append('days', days.toString());
+            newFormData.append('nights', nights.toString());
+            newFormData.append('price', price.toString());
+            newFormData.append('destination', destination);
+            newFormData.append('pax', pax.toString());
+            newFormData.append('package_type', packageType);
+            newFormData.append('inclusion', inclusion || '');
+            newFormData.append('exclusion', exclusion || '');
+            newFormData.append('itinerary', JSON.stringify(itines) || '[]');
 
-            const resp: ApiResponse = await formDataWithToken('package', newFormData)
+            const resp: ApiResponse = await formDataWithToken('package', newFormData);
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
@@ -139,6 +158,7 @@ const PackageCreate: React.FC = () => {
             console.error('Error uploading data:', error); // Handle error
         }
     };
+
     useEffect(() => {
         getdestinations();
     }, []);
@@ -191,19 +211,19 @@ const PackageCreate: React.FC = () => {
                         <div className="col-span-4">
                             <div className="w-full">
                                 <Label title={'Enter Package Title'} hfor={null} />
-                                <input type='text' onChange={handledata} className='w-full p-2 border border-blue-gray-200' placeholder='Enter Package title' />
+                                <input type='text' value={title} onChange={(e) => setTitle(e.target.value)} className='w-full p-2 border border-blue-gray-200' placeholder='Enter Package title' />
                             </div>
                         </div>
 
                         <div className="col-span-1">
                             <div className="w-full">
                                 <label className='form-label text-secondary' htmlFor="destination">Select Destination</label>
-                                <select onChange={handledata} name="destination" id="destination" className="w-full border text-xs rounded border-blue-gray-200 p-2 outline-none">
+                                <select onChange={(e) => setDestination(e.target.value)} name="destination" id="destination" className="w-full border text-xs rounded border-blue-gray-200 p-2 outline-none">
                                     <option value="">--Select--- </option>
                                     {
                                         destinations.length > 0 && destinations.map((des) => (
                                             <>
-                                                <option value={des._id}>{des.title}</option>
+                                                <option value={des._id} selected={destination == des._id}>{des.title}</option>
                                             </>
                                         ))
                                     }
@@ -215,15 +235,15 @@ const PackageCreate: React.FC = () => {
                             <label className='form-label text-secondary' htmlFor="duration">Duration</label>
                             <div className="flex w-full gap-2">
                                 <div className='flex w-1/3 rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                    <input type="number" placeholder='Days' name="days" onChange={handledata} id="" className="h-8 w-full px-1  text-center text-sm border-e border-blue-gray-200 outline-none" />
+                                    <input type="number" placeholder='Days' value={days} name="days" onChange={handledata} id="" className="h-8 w-full px-1  text-center text-sm border-e border-blue-gray-200 outline-none" />
                                     <span className='block h-8 w-10 text-center leading-8 bg-yellow-200 text-black'>D</span>
                                 </div>
                                 <div className='flex w-1/3  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                    <input type="number" placeholder='Nights' name="nights" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
+                                    <input type="number" placeholder='Nights' value={nights} name="nights" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
                                     <span className='block h-8 w-10 text-center leading-8  bg-gray-500 text-white'>N</span>
                                 </div>
                                 <div className='flex w-1/3  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
-                                    <input type="number" placeholder='Pax' name="pax" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
+                                    <input type="number" placeholder='Pax' name="pax" value={pax} onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
                                     <span className='block h-8 w-10 text-center leading-8  bg-primary text-white'>PAX</span>
                                 </div>
                             </div>
@@ -243,7 +263,7 @@ const PackageCreate: React.FC = () => {
                         <div className="col-span-1">
                             <div className="w-full">
                                 <Label title={'Package Type'} hfor={null} />
-                                <select name="package_type" onChange={handledata} id="destination" className="w-full border text-xs rounded border-blue-gray-200 p-2 outline-none">
+                                <select name="package_type" onChange={(e) => setPackageType(e.target.value)} className="w-full border text-xs rounded border-blue-gray-200 p-2 outline-none">
                                     <option value="">--Select--- </option>
                                     <option value="Group">Group</option>
                                     <option value="Custom">Custom</option>
@@ -254,7 +274,7 @@ const PackageCreate: React.FC = () => {
                             <div className="w-full">
                                 <Label title={'Price'} hfor={'price'} />
                                 <div className="block ">
-                                    <input type="text" id="price" name="over_all_price" onChange={handledata} placeholder='Enter price' className=" w-full  px-2 py-1 text-start text-sm border rounded border-blue-gray-200 outline-none" />
+                                    <input type="number" id="price" name="price" value={price} onChange={(e) => setPrice(parseInt(e.target.value))} placeholder='Enter price' className=" w-full  px-2 py-1 text-start text-sm border rounded border-blue-gray-200 outline-none" />
                                 </div>
                             </div>
                         </div>
