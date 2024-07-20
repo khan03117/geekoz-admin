@@ -1,4 +1,4 @@
-import { BranchesOutlined, ContactsOutlined, FileImageOutlined, FileOutlined, GiftOutlined, InfoCircleFilled, LogoutOutlined, MessageOutlined, OrderedListOutlined, ProductFilled, ProductOutlined, TagsOutlined, WindowsOutlined } from '@ant-design/icons'
+import { BranchesOutlined, ContactsOutlined, EnvironmentOutlined, FileImageOutlined, FileOutlined, GiftOutlined, InfoCircleFilled, LogoutOutlined, MessageOutlined, OrderedListOutlined, ProductFilled, ProductOutlined, TagsOutlined, WindowsOutlined } from '@ant-design/icons'
 // import { Collapse } from '@material-tailwind/react'
 // import React from 'react'
 import { Link } from 'react-router-dom'
@@ -34,6 +34,11 @@ const Sidebar = () => {
                     </li>
                     <li className='my-4 py-4'>
                         <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Master Data</h4>
+                    </li>
+                    <li>
+                        <Link to={'/region'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
+                            <EnvironmentOutlined />  <span className="ms-5">Region </span>
+                        </Link>
                     </li>
                     <li>
                         <Link to={'/countries'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>

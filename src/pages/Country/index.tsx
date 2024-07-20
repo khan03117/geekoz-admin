@@ -15,6 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import Label from '../Package/Label';
 import axios from 'axios';
+import CkeditorCom from '../../layout/CkeditorCom';
 
 const Country = () => {
     interface Itiny {
@@ -101,10 +102,7 @@ const Country = () => {
             setMsg("image is required");
             return;
         }
-        if (!country) {
-            setMsg("Country is required");
-            return;
-        }
+
         if (!region) {
             setMsg("Region is required");
             return;
@@ -147,6 +145,9 @@ const Country = () => {
         setCountry(cont);
         setShow(false);
     }
+    const handleAbout = (data: string) => {
+        setAbout(data);
+    };
     useEffect(() => {
         getregions();
     }, []);
@@ -211,7 +212,7 @@ const Country = () => {
                                 }
                             </select>
                         </div>
-                        <div className="col-span-1 relative">
+                        <div className="col-span-1 relative hidden">
                             <label htmlFor="" className='form-label'>Select Country</label>
                             <div className="w-full p-2 h-10 cursor-pointer rounded text-xs border border-blue-gray-200" onClick={() => setShow(!show)}>
                                 {country}
@@ -252,7 +253,7 @@ const Country = () => {
                         </div>
                         <div className="col-span-4">
                             <label htmlFor="about" className='form-label'>About Destination</label>
-                            <input title='about' id='about' type="text" onChange={(e) => setAbout(e.target.value)} className="p-2 text-sm outline-none border border-blue-gray-200 w-full rounded" />
+                            <CkeditorCom value={about} onChange={handleAbout} />
                         </div>
                         <div className="col-span-4 ">
                             <button onClick={handleMOpen} className='text-sm bg-gray-300 hover:bg-gray-400 px-4 uppercase font-light tracking-widest py-2 rounded-lg shadow-lg  text-black'>

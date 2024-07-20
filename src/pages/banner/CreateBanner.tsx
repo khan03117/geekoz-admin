@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { base_url, delete_data, formDataWithToken, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
+import Label from '../Package/Label';
 const CreateBanner = () => {
     interface Banner {
         _id: string;
@@ -86,35 +87,33 @@ const CreateBanner = () => {
                             )
                         }
 
-                        <div className="col-span-1">
-                            <label htmlFor="">Select Type</label>
-                            <select onChange={(e) => setType(e.target.value)} className="w-full p-2 border border-blue-gray-200">
+                        <div className="col-span-1 hidden">
+                            <Label title={'Select Type'} hfor={null} />
+                            <select onChange={(e) => setType(e.target.value)} className="w-full p-1 border border-blue-gray-200">
                                 <option value="Banner">Banner</option>
-                                <option value="CTA">Brands</option>
-                                <option value="Product">Product Banner</option>
                             </select>
                         </div>
                         <div className="col-span-1">
-                            <label htmlFor="">Select Image</label>
-                            <input title="image" onChange={handlefile} type="file" className="w-full p-2 border border-blue-gray-200" />
+                            <Label title={'Select Image'} hfor={null} />
+                            <input title="image" onChange={handlefile} type="file" className="w-full p-1 border rounded text-sm border-blue-gray-200" />
+                        </div>
+                        <div className="col-span-1 ">
+                            <Label title={'Enter Url'} hfor={null} />
+                            <input title="text" onChange={(e) => setSlug(e.target.value)} type="text" value={slug} className="w-full p-2 border border-blue-gray-200  rounded text-sm" />
                         </div>
                         <div className="col-span-1">
-                            <label htmlFor="">Enter Url</label>
-                            <input title="text" onChange={(e) => setSlug(e.target.value)} type="text" value={slug} className="w-full p-2 border border-blue-gray-200" />
+                            <Label title={'Enter Heading'} hfor={null} />
+                            <input title="text" onChange={(e) => setHeading(e.target.value)} type="text" value={heading} className="w-full p-2 border border-blue-gray-200  rounded text-sm" />
+                        </div>
+                        <div className="col-span-4 hidden">
+                            <Label title={'Enter Text'} hfor={null} />
+                            <input title="text" onChange={(e) => setText(e.target.value)} type="text" value={text} className="w-full p-2 border border-blue-gray-200  rounded text-sm" />
                         </div>
                         <div className="col-span-1">
-                            <label htmlFor="">Enter Heading</label>
-                            <input title="text" onChange={(e) => setHeading(e.target.value)} type="text" value={heading} className="w-full p-2 border border-blue-gray-200" />
+
+                            <button onClick={save_banner} className="px-3 text-white rounded block mt-8 shadow-sm shadow-blue-gray-200 text-sm py-2 bg-blue-800">Save Banner</button>
                         </div>
-                        <div className="col-span-1">
-                            <label htmlFor="">Enter Text</label>
-                            <input title="text" onChange={(e) => setText(e.target.value)} type="text" value={text} className="w-full p-2 border border-blue-gray-200" />
-                        </div>
-                        <div className="col-span-1">
-                            <label htmlFor="" className='block'>&nbsp;</label>
-                            <button onClick={save_banner} className="px-3 text-white text-sm py-2 bg-blue-800">Save Banner</button>
-                        </div>
-                    </div>
+                    </div >
                     <div className="grid grid-cols-2 gap-4">
                         <div className="col-span-2">
                             <div className="w-full">
@@ -174,8 +173,8 @@ const CreateBanner = () => {
 
 
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
         </>
     )
 }

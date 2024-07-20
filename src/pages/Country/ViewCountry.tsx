@@ -41,7 +41,7 @@ const ViewCountry = () => {
                         <tr className='*:text-start  *:bg-primary *:text-white *:border *:border-blue-gray-300 *:p-2'>
                             <th>Sr No</th>
                             <th>Region</th>
-                            <th>Country</th>
+
                             <th>Destination</th>
                             <th>Image</th>
                             <th>Action</th>
@@ -56,9 +56,6 @@ const ViewCountry = () => {
                                             {index + 1}
                                         </td>
                                         <td>{itm?.region?.region}</td>
-                                        <td>
-                                            {itm.country}
-                                        </td>
                                         <td>
                                             {itm.title}
                                         </td>

@@ -18,6 +18,7 @@ import ViewCountry from './pages/Country/ViewCountry'
 import Activity from './pages/activity'
 import ViewPackages from './pages/Package/ViewPackages'
 import PackageCreate from './pages/Package/PackageCreate'
+import Region from './pages/Region'
 
 
 
@@ -46,6 +47,7 @@ function App() {
           <Route path='/destinations-view' element={<ViewCountry />} />
           <Route path='/packages' element={<ViewPackages />} />
           <Route path='/packages/create' element={<PackageCreate />} />
+          <Route path='/region' element={<Region />} />
         </Route>
       </>
     )
