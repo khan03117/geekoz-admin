@@ -1,6 +1,7 @@
 import React from 'react'
-import { getData, delete_data, base_url } from '../../utils';
+import { getData, delete_data, base_url, formDataWithTokenUpdate } from '../../utils';
 import { DownloadOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const ViewPackages: React.FC = () => {
     interface Image {
@@ -52,6 +53,26 @@ const ViewPackages: React.FC = () => {
         await delete_data('package/' + id);
         getpackages();
     }
+    const [banner, setBanner] = React.useState<File>();
+    const handleBanner = async (id: string) => {
+        if (banner) {
+            const fdata = new FormData();
+            fdata.append('banner', banner);
+            await formDataWithTokenUpdate(`package/change-banner/${id}`, fdata);
+            getpackages();
+        } else {
+            alert('Banner not found')
+        }
+
+    }
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setBanner(e.target.files[0])
+        }
+    }
+
+
+
     React.useEffect(() => {
         getpackages();
     }, []);
@@ -93,15 +114,17 @@ const ViewPackages: React.FC = () => {
                                                 </td>
                                                 <td>
                                                     <img src={base_url + pack.banner[0].path} alt="" className="w-full max-w-[100px]" />
+                                                    <div className="flex pt-1">
+                                                        <input title='change banner' type="file" onChange={handleFile} className="w-full rounded-s border border-blue-gray-200 outline-none" />
+                                                        <button onClick={() => handleBanner(pack._id)} className='p-2 bg-primary text-white rounded-e text-sm '>Change</button>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <ul>
                                                         <li>
                                                             Destinaton :   {pack?.destination?.title}
                                                         </li>
-                                                        <li>
-                                                            Country : {pack?.destination?.country}
-                                                        </li>
+
                                                         <li>
                                                             Region : {pack?.destination?.region?.region}
                                                         </li>
@@ -129,8 +152,13 @@ const ViewPackages: React.FC = () => {
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <button className='bg-secondary p-2 text-white rounded text-xs'>Edit</button>
-                                                    <button onClick={() => deletepackage(pack._id)} className='bg-primary p-2 text-white rounded text-xs ms-2'>Delete</button>
+                                                    <div className="flex items-center gap-2">
+
+
+                                                        <Link to={'/packages/edit/' + pack.url} className='bg-secondary p-2 text-white rounded text-xs'>Edit</Link>
+                                                        <Link to={'/packages/itinerary/' + pack.url} className='px-2 rounded bg-secondary/50 text-white py-1' >Itinerary</Link>
+                                                        <button onClick={() => deletepackage(pack._id)} className='bg-primary p-2 text-white rounded text-xs'>Delete</button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </>
