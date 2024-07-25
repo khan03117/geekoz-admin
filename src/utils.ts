@@ -1,5 +1,5 @@
-// export const base_url = "https://punaah.in:5002/";
-export const base_url = "https://localhost:5002/";
+export const base_url = "https://punaah.in:5002/";
+// export const base_url = "https://localhost:5002/";
 export const token = localStorage.getItem('atoken');
 interface ApiResponse {
     message: string;
