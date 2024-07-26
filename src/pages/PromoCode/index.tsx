@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import '@smastrom/react-rating/style.css'
 import { delete_data, getData, postDataWithToken } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 const PromoCodes = () => {
     interface ASK {
         _id: string;
@@ -18,7 +19,7 @@ const PromoCodes = () => {
     const [data, setData] = useState<ASK[]>([]);
 
 
-    const [mesg, setMsg] = React.useState<string>('');
+    // const [mesg, setMsg] = React.useState<string>('');
     // const [code_for, setcode_for] = React.useState<string>('');
     const [promocode, setpromocode] = React.useState<string>('');
     const [startat, setstartat] = React.useState<string>('');
@@ -26,6 +27,8 @@ const PromoCodes = () => {
     const [discount, setdiscount] = React.useState<string>('');
 
     const [discount_type, setDiscountType] = useState<string>('Percent');
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
 
     const save_data = async () => {
         const Fdata = {
@@ -48,19 +51,19 @@ const PromoCodes = () => {
             }
         })
     };
-    const deletepromocode = async (id: string) => {
-        await delete_data('promocode/' + id).then(resp => {
-            if (resp) {
-                getdata();
-                setMsg(resp?.message);
+    // const deletepromocode = async (id: string) => {
+    //     await delete_data('promocode/' + id).then(resp => {
+    //         if (resp) {
+    //             getdata();
+    //             setMsg(resp?.message);
 
-                setTimeout(() => {
-                    setMsg('');
+    //             setTimeout(() => {
+    //                 setMsg('');
 
-                }, 1000);
-            }
-        })
-    }
+    //             }, 1000);
+    //         }
+    //     })
+    // }
 
 
 
@@ -73,12 +76,32 @@ const PromoCodes = () => {
     useEffect(() => {
         getdata();
     }, [])
+
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('promocode/' + deleteId);
+        getdata();
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section className="py-10">
                 <div className="container mx-auto">
                     <div className="grid grid-cols-6 gap-3 mb-10">
-                        {
+                        {/* {
                             mesg && (
                                 <>
                                     <div className={`col-span-5 rounded-md ${status == "1" ? 'bg-green-700' : 'bg-red-700'}`}>
@@ -88,7 +111,7 @@ const PromoCodes = () => {
                                     </div>
                                 </>
                             )
-                        }
+                        } */}
 
                         {/* <div className="col-span-1">
                             <label htmlFor="">Code For</label>
@@ -173,7 +196,7 @@ const PromoCodes = () => {
                                                 </td>
                                                 <td>
                                                     <div className="flex gap-2">
-                                                        <button onClick={() => deletepromocode(test._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
+                                                        <button onClick={() => showDeleteConfirmation(test._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
                                                             <DeleteOutlined />
                                                         </button>
 

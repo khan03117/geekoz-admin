@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { base_url, delete_data, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
-import Swal from 'sweetalert2';
+
 import { Collapse, Input, Textarea } from '@material-tailwind/react';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 
 const Activity: React.FC = () => {
     interface Seller {
@@ -22,6 +23,8 @@ const Activity: React.FC = () => {
     const [image, setImage] = useState<File>();
     const [open, setOpen] = useState(false);
     const [description, setDescription] = useState('');
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
 
     const handlefile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -69,25 +72,8 @@ const Activity: React.FC = () => {
             setSellers(resp.data);
         })
     }
-    const deletedata = async (id: string) => {
-        await delete_data('activity/' + id);
-        getdata();
-    }
-    const handledelete = (id: string) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'User will have Admin Privileges',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                deletedata(id)
-            }
-        })
-    }
+
+
     useEffect(() => {
         const found = sellers.find(obj => obj._id == editid);
         if (found) {
@@ -97,8 +83,29 @@ const Activity: React.FC = () => {
     React.useEffect(() => {
         getdata();
     }, [])
+
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('activity/' + deleteId);
+        getdata();
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
+
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section>
                 <div className="container">
                     <div className="w-full mb-5 text-end">
@@ -170,7 +177,7 @@ const Activity: React.FC = () => {
                                                     {sell.title}
                                                 </td>
                                                 <td>
-                                                    <button onClick={() => handledelete(sell._id)} title='delete' className='bg-amber-900 text-white size-8'>
+                                                    <button onClick={() => showDeleteConfirmation(sell._id)} title='delete' className='bg-amber-900 text-white size-8'>
                                                         <DeleteOutlined />
                                                     </button>
                                                     <button onClick={() => setEditid(sell._id)}>

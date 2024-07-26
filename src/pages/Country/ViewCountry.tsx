@@ -1,14 +1,17 @@
 import React from 'react'
 import { base_url, delete_data, getData } from '../../utils';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 const ViewCountry = () => {
+    const navigate = useNavigate()
     interface Country {
         _id: string,
         region: {
             _id: string;
             region: string;
         },
+        url: string;
         title: string;
         country: string;
         image: string;
@@ -18,20 +21,40 @@ const ViewCountry = () => {
         };
     }
     const [data, setData] = React.useState<Country[]>([]);
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
+
     const getdata = async () => {
         await getData('country').then((resp) => {
             setData(resp.data);
         })
     }
-    const deletecategory = async (id: string) => {
-        await delete_data('country/delete/' + id);
-        getdata()
-    }
+
     React.useEffect(() => {
         getdata();
     }, []);
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('country/delete/' + deleteId);
+        getdata()
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
+
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <div className="w-full mt-10">
                 <div className="w-full mb-5 text-end">
                     <Link to={'/countries'} className='bg-primary px-4 py-2 text-xs text-white'>Add New Destination</Link>
@@ -50,7 +73,9 @@ const ViewCountry = () => {
                     <tbody>
                         {
                             data.length > 0 && data.map((itm, index) => (
+
                                 <>
+
                                     <tr className='*:text-sm *:border *:border-blue-gray-300 *:p-2'>
                                         <td>
                                             {index + 1}
@@ -65,23 +90,26 @@ const ViewCountry = () => {
 
                                         <td>
                                             <div className="inline-flex gap-2">
-                                                <button type='button' onClick={() => deletecategory(itm._id)} title='delet button' className="bg-red-500 text-xs uppercase tracking-widest text-white px-4 py-2 rounded-md">
+                                                <button type='button' onClick={() => showDeleteConfirmation(itm._id)} title='delet button' className="bg-red-500 text-xs uppercase tracking-widest text-white px-4 py-2 rounded-md">
                                                     <DeleteOutlined />
                                                 </button>
-                                                <button type='button' title='Edit button' className="bg-indigo-500 text-xs uppercase tracking-widest text-white px-4 py-2 rounded-md">
+                                                <button type='button' title='Edit button' onClick={() => navigate(`/countries/${itm.url}`)} className="bg-indigo-500 text-xs uppercase tracking-widest text-white px-4 py-2 rounded-md">
                                                     <EditOutlined />
                                                 </button>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr >
                                 </>
                             ))
                         }
                     </tbody>
                 </table>
-            </div>
+            </div >
         </>
     )
 }
 
 export default ViewCountry
+
+
+

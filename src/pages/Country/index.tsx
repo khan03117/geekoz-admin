@@ -12,7 +12,7 @@ import {
     DialogHeader,
     DialogBody
 } from "@material-tailwind/react";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Label from '../Package/Label';
 import axios from 'axios';
 import CkeditorCom from '../../layout/CkeditorCom';
@@ -40,6 +40,7 @@ const Country = () => {
         };
     }
     const [image, setImage] = React.useState<File | null>(null);
+    const { id } = useParams()
 
     const [title, setTitle] = React.useState<string>('');
     const [mesg, setMsg] = React.useState<string>();
@@ -50,6 +51,8 @@ const Country = () => {
     const [about, setAbout] = React.useState<string>('');
     const [regions, setRegions] = React.useState<Region[]>([]);
     const [countries, setCountries] = React.useState<Country[]>([]);
+
+
     const [country, setCountry] = React.useState<string>('')
     const [show, setShow] = React.useState(false);
     const [region, setRegion] = React.useState<string>('');
@@ -150,7 +153,16 @@ const Country = () => {
     };
     useEffect(() => {
         getregions();
-    }, []);
+        if (id) {
+            getdata()
+        }
+    }, [id]);
+
+    const getdata = async () => {
+        await getData(`country/show/${id}`).then((resp) => {
+            console.log(resp.data)
+        })
+    }
 
     return (
         <>

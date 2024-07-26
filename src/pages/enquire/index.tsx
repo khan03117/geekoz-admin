@@ -1,5 +1,6 @@
 import React from 'react'
 import { delete_data, getData } from '../../utils';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 
 const Enquire = () => {
     interface Enquire {
@@ -10,6 +11,8 @@ const Enquire = () => {
         destination: string;
     }
     const [enquires, setEnquired] = React.useState<Enquire[]>([]);
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
     const getdata = async () => {
         const items = await getData('enquire');
         setEnquired(items.data);
@@ -17,15 +20,30 @@ const Enquire = () => {
     React.useEffect(() => {
         getdata();
     }, []);
-    const handleDelete = async (id: string) => {
-        if (confirm('are you sure ?')) {
-            await delete_data('enquire/' + id);
-            getdata();
-        }
 
+
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('enquire/' + deleteId);
+        getdata();
+
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
     }
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section className="py-5">
                 <div className="container">
                     <div className="grid grid-cols-1">
@@ -64,7 +82,7 @@ const Enquire = () => {
                                                             {itm.destination}
                                                         </td>
                                                         <td>
-                                                            <button onClick={() => handleDelete(itm._id)} className='px-2 py-1 rounded bg-primary text-white'>
+                                                            <button onClick={() => showDeleteConfirmation(itm._id)} className='px-2 py-1 rounded bg-primary text-white'>
                                                                 Delete
                                                             </button>
                                                         </td>

@@ -2,6 +2,7 @@ import React from 'react'
 import { getData, delete_data, base_url, formDataWithTokenUpdate } from '../../utils';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 
 const ViewPackages: React.FC = () => {
     interface Image {
@@ -45,14 +46,13 @@ const ViewPackages: React.FC = () => {
         itinerary: Itinerary[];
     }
     const [packages, setPackages] = React.useState<Package[]>([]);
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
     const getpackages = async () => {
         const resp = await getData('package');
         setPackages(resp.data);
     }
-    const deletepackage = async (id: string) => {
-        await delete_data('package/' + id);
-        getpackages();
-    }
+
     const [banner, setBanner] = React.useState<File>();
     const handleBanner = async (id: string) => {
         if (banner) {
@@ -76,8 +76,29 @@ const ViewPackages: React.FC = () => {
     React.useEffect(() => {
         getpackages();
     }, []);
+
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('package/' + deleteId);
+        getpackages();
+
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section>
                 <div className="container mx-auto">
                     <div className="w-full">
@@ -157,7 +178,7 @@ const ViewPackages: React.FC = () => {
 
                                                         <Link to={'/packages/edit/' + pack.url} className='bg-secondary p-2 text-white rounded text-xs'>Edit</Link>
                                                         <Link to={'/packages/itinerary/' + pack.url} className='px-2 rounded bg-secondary/50 text-white py-1' >Itinerary</Link>
-                                                        <button onClick={() => deletepackage(pack._id)} className='bg-primary p-2 text-white rounded text-xs'>Delete</button>
+                                                        <button onClick={() => showDeleteConfirmation(pack._id)} className='bg-primary p-2 text-white rounded text-xs'>Delete</button>
                                                     </div>
                                                 </td>
                                             </tr>

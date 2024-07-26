@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { base_url, delete_data, formDataWithToken, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
 import Label from '../Package/Label';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 const CreateBanner = () => {
     interface Banner {
         _id: string;
@@ -18,6 +19,8 @@ const CreateBanner = () => {
     const [type, setType] = useState('Banner');
     const [mesg, setMsg] = React.useState<string>();
     const [status, setStatus] = React.useState<string>();
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
     const [slug, setSlug] = React.useState<string>();
     const handlefile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -29,19 +32,7 @@ const CreateBanner = () => {
             setBanner(resp.data)
         })
     }
-    const deletebanner = async (id: string) => {
-        await delete_data('banner/' + id).then(resp => {
-            if (resp) {
-                getbanners();
-                setMsg(resp?.message);
-                setStatus(resp?.success);
-                setTimeout(() => {
-                    setMsg('');
-                    setStatus('0');
-                }, 1000);
-            }
-        })
-    }
+
     const save_banner = async () => {
         const Fdata = new FormData();
         if (image) {
@@ -70,8 +61,37 @@ const CreateBanner = () => {
     useEffect(() => {
         getbanners();
     }, [])
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('banner/' + deleteId).then(resp => {
+            if (resp) {
+                getbanners();
+                setMsg(resp?.message);
+                setStatus(resp?.success);
+                setTimeout(() => {
+                    setMsg('');
+                    setStatus('0');
+                }, 1000);
+            }
+        })
+        getbanners();
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section className="py-5">
                 <div className="container mx-auto">
                     <div className="grid grid-cols-4 gap-4 mb-10">
@@ -154,7 +174,7 @@ const CreateBanner = () => {
                                                         </td>
                                                         <td>
                                                             <div className="flex gap-2">
-                                                                <button onClick={() => deletebanner(bann._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
+                                                                <button onClick={() => showDeleteConfirmation(bann._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
                                                                     <DeleteOutlined />
                                                                 </button>
                                                                 {/* <button title='delete button' className="bg-blue-900 text-white size-10 rounded-md">

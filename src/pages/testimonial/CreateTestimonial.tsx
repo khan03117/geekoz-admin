@@ -5,6 +5,7 @@ import '@smastrom/react-rating/style.css'
 import { base_url, delete_data, formDataWithToken, getData, updateDataWithToken } from '../../utils';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Switch } from '@material-tailwind/react';
+import ConfirmPopup from '../../layout/ConfirmPopup';
 const CreateTestimonial = () => {
     interface ASK {
         _id: string;
@@ -23,6 +24,8 @@ const CreateTestimonial = () => {
     const [subject, setSubject] = React.useState<string>('');
     const [name, setName] = React.useState<string>('');
     const [description, setDescription] = React.useState<string>('');
+    const [deleteId, setDeleteId] = React.useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
     const [status, setStatus] = React.useState<string>('');
 
     const handlefile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,19 +54,7 @@ const CreateTestimonial = () => {
             }
         })
     };
-    const deletebanner = async (id: string) => {
-        await delete_data('testimonial/' + id).then(resp => {
-            if (resp) {
-                getdata();
-                setMsg(resp?.message);
-                setStatus(resp?.success);
-                setTimeout(() => {
-                    setMsg('');
-                    setStatus('0');
-                }, 1000);
-            }
-        })
-    }
+
     const getdata = async () => {
         await getData('testimonial/admin').then((resp) => {
             setData(resp.data);
@@ -76,8 +67,37 @@ const CreateTestimonial = () => {
     useEffect(() => {
         getdata();
     }, [])
+    const showDeleteConfirmation = (id: string) => {
+        setDeleteId(id);
+        setConfirmDelete(true);
+    }
+
+    const handleDeleteConfirmed = async () => {
+        await delete_data('testimonial/' + deleteId).then(resp => {
+            if (resp) {
+                getdata();
+                setMsg(resp?.message);
+                setStatus(resp?.success);
+                setTimeout(() => {
+                    setMsg('');
+                    setStatus('0');
+                }, 1000);
+            }
+        })
+
+
+
+        setConfirmDelete(false) // Hide confirmation modal after delete
+    }
     return (
         <>
+            {confirmDelete && (
+                <ConfirmPopup
+
+                    onConfirm={handleDeleteConfirmed}
+                    onCancel={() => setConfirmDelete(false)}
+                />
+            )}
             <section className="py-10">
                 <div className="container mx-auto">
                     <div className="grid grid-cols-4 gap-4 mb-10">
@@ -116,7 +136,7 @@ const CreateTestimonial = () => {
 
                         <div className="col-span-1">
                             <label htmlFor="" className='block'>&nbsp;</label>
-                            <button onClick={save_data} className="px-3 text-white text-sm py-2 bg-blue-800 rounded-md">Save Testimonial</button>
+                            <button onClick={save_data} className="px-3 text-white text-sm py-2 bg-primary rounded-md">Save Testimonial</button>
                         </div>
                     </div>
                     <div className="w-full mt-6">
@@ -159,7 +179,7 @@ const CreateTestimonial = () => {
                                                 </td>
                                                 <td>
                                                     <div className="flex gap-2">
-                                                        <button onClick={() => deletebanner(test._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
+                                                        <button onClick={() => showDeleteConfirmation(test._id)} title='delete button' className="bg-amber-900 text-white size-10 rounded-md">
                                                             <DeleteOutlined />
                                                         </button>
                                                         <button title='delete button' className="bg-blue-900 hidden text-white size-10 rounded-md">
