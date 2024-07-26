@@ -37,7 +37,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path='/dashboard' element={<Home />} />
           <Route path='/countries' element={<Country />} />
-          <Route path='/countries/:id' element={<Country />} />
+          <Route path='/countries/:url' element={<Country />} />
 
           <Route path='/banner' element={<CreateBanner />} />
           <Route path='/testimonial' element={<CreateTestimonial />} />

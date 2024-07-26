@@ -40,9 +40,7 @@ const ViewCountry = () => {
 
     const handleDeleteConfirmed = async () => {
         await delete_data('country/delete/' + deleteId);
-        getdata()
-
-
+        getdata();
         setConfirmDelete(false) // Hide confirmation modal after delete
     }
 

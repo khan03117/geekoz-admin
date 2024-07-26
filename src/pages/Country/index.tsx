@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { PlusCircleOutlined, SaveOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
-import { formDataWithToken, getData } from '../../utils';
+import { base_url, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
 import {
     Accordion,
     AccordionHeader,
@@ -19,6 +19,7 @@ import CkeditorCom from '../../layout/CkeditorCom';
 
 const Country = () => {
     interface Itiny {
+        _id?: string;
         title: string;
         description: string;
     }
@@ -39,9 +40,47 @@ const Country = () => {
             };
         };
     }
-    const [image, setImage] = React.useState<File | null>(null);
-    const { id } = useParams()
 
+    interface Destination {
+        _id: string;
+        url: string;
+        title: string;
+        region: string;
+        country: string;
+        image: string;
+        about: string;
+        itinerary: Itiny[];
+        packages: {
+            url: string;
+            title: string;
+            package_type: string;
+            price: string;
+            banner: {
+                path: string;
+            }[];
+            days: string;
+            nights: string;
+            pax: string;
+        }[]
+
+    }
+    const [image, setImage] = React.useState<File | null>(null);
+    const { url } = useParams()
+    const [mdestination, setDestination] = React.useState<Destination>();
+
+    const getdestinationdata = async () => {
+        if (url) {
+            const item = await getData('country/show/' + url);
+            setDestination(item.data);
+        }
+
+    }
+
+    React.useEffect(() => {
+        if (url) {
+            getdestinationdata();
+        }
+    }, []);
     const [title, setTitle] = React.useState<string>('');
     const [mesg, setMsg] = React.useState<string>();
     const [open, setOpen] = React.useState(1);
@@ -51,12 +90,24 @@ const Country = () => {
     const [about, setAbout] = React.useState<string>('');
     const [regions, setRegions] = React.useState<Region[]>([]);
     const [countries, setCountries] = React.useState<Country[]>([]);
-
-
     const [country, setCountry] = React.useState<string>('')
     const [show, setShow] = React.useState(false);
     const [region, setRegion] = React.useState<string>('');
+    const [ieid, setIeid] = React.useState<number>(-1);
     const scrollref = React.useRef<HTMLDivElement>(null);
+    const deleteItinerary = (id: number) => {
+        const arr = [...itines];
+        arr.splice(id, 1);
+        setItinies(arr);
+    }
+    const editItinerary = (id: number) => {
+        const found = itines[id];
+        if (found) {
+            setIeid(id);
+            setInity(found);
+            setMOpen(true);
+        }
+    }
     const handlesarch = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         if (val.length > 2) {
@@ -74,7 +125,10 @@ const Country = () => {
         setRegions(resp.data);
     }
     const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
-    const handleMOpen = () => setMOpen(!mopen);
+    const handleMOpen = () => {
+        setMOpen(!mopen);
+        setInity({ title: "", description: "" });
+    }
 
     const handleimage = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -93,18 +147,44 @@ const Country = () => {
         });
     }
     const submititinerary = () => {
-        if (inity && inity.title && inity.description) {
-            setItinies(prevItinies => [...prevItinies, inity]);
-            setInity({ title: '', description: '' }); // Reset inity after submission if needed
+        if (ieid > -1) {
+            const arr: Itiny[] = [...itines];
+            if (arr[ieid] && inity?.title && inity.description) {
+                arr[ieid] = inity;
+                setItinies(arr);
+                setInity({ title: '', description: '' });
+                setIeid(-1);
+            }
+        } else {
+            if (inity && inity.title && inity.description) {
+                setItinies(prevItinies => [...prevItinies, inity]);
+                setInity({ title: '', description: '' }); // Reset inity after submission if needed
+            }
         }
         setMOpen(false)
+
     }
+    const setAlldata = () => {
+        if (url && mdestination) {
+            setRegion(mdestination?.region);
+            setAbout(mdestination.about);
+            setTitle(mdestination.title);
+            setItinies(mdestination.itinerary);
+        }
+
+    }
+    useEffect(() => {
+        setAlldata();
+    }, [mdestination])
     const postdata = async () => {
         const formData = new FormData();
-        if (!image) {
-            setMsg("image is required");
-            return;
+        if (!url) {
+            if (!image) {
+                setMsg("image is required");
+                return;
+            }
         }
+
 
         if (!region) {
             setMsg("Region is required");
@@ -122,22 +202,39 @@ const Country = () => {
             setMsg("Title is required");
             return;
         }
-        formData.append('image', image);
+        if (image) {
+            formData.append('image', image);
+        }
+
         formData.append('title', title);
         formData.append('about', about);
         formData.append('itinerary', JSON.stringify(itines));
         formData.append('country', country);
         formData.append('region', region);
         try {
-            await formDataWithToken('country', formData).then(resp => {
-                setMsg(resp.message);
-                setTitle('');
-                setImage(null);
-                setItinies([]);
-                if (scrollref.current) {
-                    scrollref.current.scrollIntoView({ block: "start" })
-                }
-            })
+            const apiurl = url ? 'country/' + mdestination?._id : 'country';
+            if (url) {
+                await formDataWithTokenUpdate(apiurl, formData).then((resp) => {
+                    setMsg(resp.message);
+                    getdestinationdata();
+                    setImage(null);
+                    setItinies([]);
+                    if (scrollref.current) {
+                        scrollref.current.scrollIntoView({ block: "start" })
+                    }
+                })
+            } else {
+                await formDataWithToken(apiurl, formData).then(resp => {
+                    setMsg(resp.message);
+                    setTitle('');
+                    setImage(null);
+                    setItinies([]);
+                    if (scrollref.current) {
+                        scrollref.current.scrollIntoView({ block: "start" })
+                    }
+                })
+            }
+
 
         } catch (error) {
             console.log(mesg)
@@ -153,16 +250,9 @@ const Country = () => {
     };
     useEffect(() => {
         getregions();
-        if (id) {
-            getdata()
-        }
-    }, [id]);
+    }, []);
 
-    const getdata = async () => {
-        await getData(`country/show/${id}`).then((resp) => {
-            console.log(resp.data)
-        })
-    }
+
 
     return (
         <>
@@ -176,13 +266,14 @@ const Country = () => {
                             </DialogHeader>
                             <DialogBody placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                 <div className="w-full space-y-3">
+                                    <input type="hidden" name="" value={inity?._id} />
                                     <div className="w-full">
                                         <label htmlFor="title">Enter Title</label>
-                                        <input type='text' name="title" id="title" onChange={handleitinerary} className="w-full rounded p-2 outline-none border rouned border-blue-gray-300" />
+                                        <input type='text' value={inity?.title} name="title" id="title" onChange={handleitinerary} className="w-full rounded p-2 outline-none border rouned border-blue-gray-300" />
                                     </div>
                                     <div className="w-full">
                                         <label htmlFor="description">Enter Description</label>
-                                        <textarea name="description" id="description" onChange={handleitinerary} rows={6} className="w-full  rounded outline-none border p-2 rouned border-blue-gray-300"></textarea>
+                                        <textarea name="description" id="description" onChange={handleitinerary} rows={6} value={inity?.description} className="w-full  rounded outline-none border p-2 rouned border-blue-gray-300"></textarea>
                                     </div>
                                     <div className="w-full">
                                         <button onClick={submititinerary} className="w-full bg-primary text-white py-2 outline-none rounded">Submit</button>
@@ -218,7 +309,7 @@ const Country = () => {
                                 {
                                     regions.map((reg) => (
                                         <>
-                                            <option value={reg._id}>{reg.region}</option>
+                                            <option value={reg._id} selected={region == reg._id}>{reg.region}</option>
                                         </>
                                     ))
                                 }
@@ -257,11 +348,19 @@ const Country = () => {
 
                         <div className="col-span-1 ">
                             <label htmlFor="" className='form-label'>Enter Destination</label>
-                            <input title='country' type="text" onChange={handletitle} className="p-2 text-sm outline-none border border-blue-gray-200 w-full rounded" />
+                            <input title='country' type="text" value={title} onChange={handletitle} className="p-2 text-sm outline-none border border-blue-gray-200 w-full rounded" />
+
                         </div>
                         <div className="col-span-1">
                             <label htmlFor="" className='form-label'> Upload Image</label>
                             <input title='image' type="file" onChange={handleimage} className="p-2 text-sm outline-none border border-blue-gray-200 w-full rounded" />
+                            {
+                                (url && mdestination) && (
+                                    <>
+                                        <img src={base_url + mdestination.image} alt="" className="w-full" />
+                                    </>
+                                )
+                            }
                         </div>
                         <div className="col-span-4">
                             <label htmlFor="about" className='form-label'>About Destination</label>
@@ -276,12 +375,22 @@ const Country = () => {
                             {
                                 itines.map((itm, idx) => (
                                     <>
-                                        <Accordion open={open === idx} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                            <AccordionHeader placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} onClick={() => handleOpen(idx)}>
+                                        <Accordion className='mb-3 bg-gray-300 border  rounded overflow-hidden border-gray-400' open={open === idx} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                                            <AccordionHeader className='px-4 text-sm' placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} onClick={() => handleOpen(idx)}>
                                                 {itm.title} <span className="ms-auto">Day {idx + 1}</span>
                                             </AccordionHeader>
-                                            <AccordionBody>
+                                            <AccordionBody className="bg-white px-4 text-sm">
                                                 {itm.description}
+                                                <div className="w-full grid grid-cols-2 py-2">
+                                                    <div className="col-span-1">
+                                                        <button onClick={() => editItinerary(idx)} className="bg-secondary text-white px-4 py-2 rounded">Edit</button>
+
+                                                    </div>
+                                                    <div className="col-span-1">
+                                                        <button onClick={() => deleteItinerary(idx)} className="bg-primary text-white px-4 py-2 rounded">Delete</button>
+
+                                                    </div>
+                                                </div>
                                             </AccordionBody>
                                         </Accordion>
                                     </>
