@@ -139,7 +139,7 @@ const PackageCreate: React.FC = () => {
             newFormData.append('nights', nights.toString());
             newFormData.append('price', price.toString());
             newFormData.append('destination', destination);
-            newFormData.append('pax', pax.toString());
+            newFormData.append('pax', '1000');
             newFormData.append('package_type', packageType);
             newFormData.append('inclusion', inclusion || '');
             newFormData.append('exclusion', exclusion || '');
@@ -242,7 +242,7 @@ const PackageCreate: React.FC = () => {
                                     <input type="number" placeholder='Nights' value={nights} name="nights" onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
                                     <span className='block h-8 w-10 text-center leading-8  bg-gray-500 text-white'>N</span>
                                 </div>
-                                <div className='flex w-1/3  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
+                                <div className=' w-0 hidden  rounded overflow-hidden  border border-blue-gray-200 text-xs'>
                                     <input type="number" placeholder='Pax' name="pax" value={pax} onChange={handledata} id="" className="h-8  w-full px-1 text-center text-sm border-e border-blue-gray-200 outline-none" />
                                     <span className='block h-8 w-10 text-center leading-8  bg-primary text-white'>PAX</span>
                                 </div>
