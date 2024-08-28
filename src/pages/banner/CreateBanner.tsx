@@ -3,6 +3,8 @@ import { base_url, delete_data, formDataWithToken, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
 import Label from '../Package/Label';
 import ConfirmPopup from '../../layout/ConfirmPopup';
+import { useNavigate } from 'react-router-dom';
+
 const CreateBanner = () => {
     interface Banner {
         _id: string;
@@ -12,6 +14,7 @@ const CreateBanner = () => {
         heading?: string;
         text?: string
     }
+    const navigate = useNavigate();
     const [image, setImage] = useState<File>();
     const [banners, setBanner] = useState<Banner[]>([]);
     const [heading, setHeading] = useState<string>('');
@@ -28,7 +31,7 @@ const CreateBanner = () => {
         }
     }
     const getbanners = async () => {
-        await getData('banner').then(resp => {
+        await getData('banner', navigate).then(resp => {
             setBanner(resp.data)
         })
     }
@@ -45,7 +48,7 @@ const CreateBanner = () => {
 
         }
         Fdata.append('type', type);
-        await formDataWithToken('banner', Fdata).then((resp) => {
+        await formDataWithToken('banner', Fdata, navigate).then((resp) => {
             if (resp) {
                 getbanners();
                 setMsg(resp?.message);
@@ -67,7 +70,7 @@ const CreateBanner = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('banner/' + deleteId).then(resp => {
+        await delete_data('banner/' + deleteId, navigate).then(resp => {
             if (resp) {
                 getbanners();
                 setMsg(resp?.message);

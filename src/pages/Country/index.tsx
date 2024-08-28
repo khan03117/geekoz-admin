@@ -12,7 +12,7 @@ import {
     DialogHeader,
     DialogBody
 } from "@material-tailwind/react";
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Label from '../Package/Label';
 import axios from 'axios';
 import CkeditorCom from '../../layout/CkeditorCom';
@@ -64,13 +64,14 @@ const Country = () => {
         }[]
 
     }
+    const navigate = useNavigate();
     const [image, setImage] = React.useState<File | null>(null);
     const { url } = useParams()
     const [mdestination, setDestination] = React.useState<Destination>();
 
     const getdestinationdata = async () => {
         if (url) {
-            const item = await getData('country/show/' + url);
+            const item = await getData('country/show/' + url, navigate);
             setDestination(item.data);
         }
 
@@ -81,6 +82,7 @@ const Country = () => {
             getdestinationdata();
         }
     }, []);
+
     const [title, setTitle] = React.useState<string>('');
     const [mesg, setMsg] = React.useState<string>();
     const [open, setOpen] = React.useState(1);
@@ -121,7 +123,7 @@ const Country = () => {
     }
 
     const getregions = async () => {
-        const resp = await getData('country/region');
+        const resp = await getData('country/region', navigate);
         setRegions(resp.data);
     }
     const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
@@ -214,7 +216,7 @@ const Country = () => {
         try {
             const apiurl = url ? 'country/' + mdestination?._id : 'country';
             if (url) {
-                await formDataWithTokenUpdate(apiurl, formData).then((resp) => {
+                await formDataWithTokenUpdate(apiurl, formData, navigate).then((resp) => {
                     setMsg(resp.message);
                     getdestinationdata();
                     setImage(null);
@@ -224,7 +226,7 @@ const Country = () => {
                     }
                 })
             } else {
-                await formDataWithToken(apiurl, formData).then(resp => {
+                await formDataWithToken(apiurl, formData, navigate).then(resp => {
                     setMsg(resp.message);
                     setTitle('');
                     setImage(null);

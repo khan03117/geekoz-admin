@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { getData, delete_data, base_url, formDataWithTokenUpdate, postDataWithToken } from '../../utils';
 import { DownloadOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ConfirmPopup from '../../layout/ConfirmPopup';
 import { Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
 import moment from 'moment';
@@ -53,29 +53,30 @@ const ViewPackages: React.FC = () => {
     const [dopen, setDopen] = React.useState(false);
     const [pid, setPid] = React.useState<string>('');
     const [ndate, setNdate] = React.useState<string>('');
-    interface Gdate { _id: string; dates: string[]; month: string;year:string }
+    interface Gdate { _id: string; dates: string[]; month: string; year: string }
     const [dates, setDates] = React.useState<Gdate[]>([]);
+    const navigate = useNavigate();
     const getpackages = async () => {
-        const resp = await getData('package');
+        const resp = await getData('package', navigate);
         setPackages(resp.data);
     }
     const handleDopen = (id: string) => {
         setPid(id);
         setDopen(!dopen);
-      
+
     }
     useEffect(() => {
-        if(pid){
+        if (pid) {
             get_dates();
         }
-      
+
     }, [pid])
     const save_date = async () => {
-        await postDataWithToken('package/group-dates', { package: pid, date: ndate });
+        await postDataWithToken('package/group-dates', { package: pid, date: ndate }, navigate);
         get_dates();
     }
     const get_dates = async () => {
-        const items = await getData('package/group-dates/'+pid);
+        const items = await getData('package/group-dates/' + pid, navigate);
         setDates(items.data);
     }
     const [banner, setBanner] = React.useState<File>();
@@ -83,7 +84,7 @@ const ViewPackages: React.FC = () => {
         if (banner) {
             const fdata = new FormData();
             fdata.append('banner', banner);
-            await formDataWithTokenUpdate(`package/change-banner/${id}`, fdata);
+            await formDataWithTokenUpdate(`package/change-banner/${id}`, fdata, navigate);
             getpackages();
         } else {
             alert('Banner not found')
@@ -108,7 +109,7 @@ const ViewPackages: React.FC = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('package/' + deleteId);
+        await delete_data('package/' + deleteId, navigate);
         getpackages();
         setConfirmDelete(false) // Hide confirmation modal after delete
     }
@@ -124,44 +125,44 @@ const ViewPackages: React.FC = () => {
                             </DialogHeader>
                             <DialogBody placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                 <div className="w-full flex border border-blue-gray-200 rounded overflow-hidden">
-                                    <input type="date" onChange={(e) => setNdate(e.target.value)} value={ndate} className="w-full outline-none p-3" />
+                                    <input placeholder='Enter new date' type="date" onChange={(e) => setNdate(e.target.value)} value={ndate} className="w-full outline-none p-3" />
                                     <button onClick={save_date} className='text-xs text-nowrap px-5 bg-primary text-white rounded-e'>Add Date</button>
                                 </div>
                                 <div className="w-full">
-                                   <table className="w-full">
-                                    <thead>
-                                        <tr className='*:text-sm *:border *:border-blue-gray-200 *:p-2 *:text'>
-                                            <th>Sr No</th>
-                                            <th>Month</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            dates.map((itm, idx) => (
-                                                <>
-                                              <tr className='*:text-sm *:border *:border-blue-gray-200 *:p-2'>
-                                                    <td>
-                                                        {idx  +1}
-                                                    </td>
-                                                    <td>
-                                                        {itm.month} {itm.year}
-                                                    </td>
-                                                    <td>
-                                                        {itm.dates.map(dt => (
-                                                            <>
-                                                                <span className="me-2">
-                                                                    {moment(dt).format('DD-MMM-YYYY')}
-                                                                </span>
-                                                            </>
-                                                        ))}
-                                                    </td>
-                                                </tr>
-                                                </>
-                                            ))
-                                        }
-                                    </tbody>
-                                   </table>
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className='*:text-sm *:border *:border-blue-gray-200 *:p-2 *:text'>
+                                                <th>Sr No</th>
+                                                <th>Month</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                dates.map((itm, idx) => (
+                                                    <>
+                                                        <tr className='*:text-sm *:border *:border-blue-gray-200 *:p-2'>
+                                                            <td>
+                                                                {idx + 1}
+                                                            </td>
+                                                            <td>
+                                                                {itm.month} {itm.year}
+                                                            </td>
+                                                            <td>
+                                                                {itm.dates.map(dt => (
+                                                                    <>
+                                                                        <span className="me-2">
+                                                                            {moment(dt).format('DD-MMM-YYYY')}
+                                                                        </span>
+                                                                    </>
+                                                                ))}
+                                                            </td>
+                                                        </tr>
+                                                    </>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
                             </DialogBody>
                         </Dialog>

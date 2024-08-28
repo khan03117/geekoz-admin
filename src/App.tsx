@@ -10,7 +10,7 @@ import CreatePolicy from './pages/policy/CreatePolicy'
 import Login from './pages/Login'
 import PromoCodes from './pages/PromoCode'
 import SubCategory from './pages/SubCategory'
-import Offer from './pages/Offer'
+
 import CreateFaq from './pages/faq/CreateFaq'
 import ViewFaq from './pages/faq/ViewFaq'
 import Country from './pages/Country'
@@ -22,6 +22,7 @@ import Region from './pages/Region'
 import Enquire from './pages/enquire'
 import EditPackage from './pages/Package/EditPackage'
 import Itinerary from './pages/Package/Itinerary'
+import CreateCategory from './pages/Category/CreateCategory'
 
 
 
@@ -38,14 +39,13 @@ function App() {
           <Route path='/dashboard' element={<Home />} />
           <Route path='/countries' element={<Country />} />
           <Route path='/countries/:url' element={<Country />} />
-
+          <Route path='/category' element={<CreateCategory />} />
           <Route path='/banner' element={<CreateBanner />} />
           <Route path='/testimonial' element={<CreateTestimonial />} />
           <Route path='/contact-details' element={<ContactDetails />} />
           <Route path='/policy' element={<CreatePolicy />} />
           <Route path='/promo-code' element={<PromoCodes />} />
           <Route path='/subcategory' element={<SubCategory />} />
-          <Route path='/offer' element={<Offer />} />
           <Route path='/activity' element={<Activity />} />
           <Route path='/faq/create' element={<CreateFaq />} />
           <Route path='/faq' element={<ViewFaq />} />

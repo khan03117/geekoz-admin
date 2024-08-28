@@ -1,10 +1,11 @@
 import React from 'react'
 import { base_url, getData, postDataWithToken, updateDataWithToken } from '../../utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LeftOutlined } from '@ant-design/icons';
 
 const Itinerary: React.FC = () => {
     const { url } = useParams();
+    const navigate = useNavigate();
     interface Itinerary {
         _id: string;
         day: number;
@@ -30,7 +31,7 @@ const Itinerary: React.FC = () => {
     }
     const [mpackage, setPackage] = React.useState<Package>();
     const getpackage = async () => {
-        const item = await getData('package/show/' + url);
+        const item = await getData('package/show/' + url, navigate);
         setPackage(item.data);
     }
     const [title, setTitle] = React.useState<string>('');
@@ -79,7 +80,7 @@ const Itinerary: React.FC = () => {
             description: description
         }
         interface ApiResponse { message: string; success: string }
-        const resp: ApiResponse = await postDataWithToken('package/itinerary/' + mpackage._id, data);
+        const resp: ApiResponse = await postDataWithToken('package/itinerary/' + mpackage._id, data, navigate);
         setMessage(resp.message);
         setStatus(resp.success);
         setInterval(() => {
@@ -94,7 +95,7 @@ const Itinerary: React.FC = () => {
             title: title,
             description: description
         }
-        await updateDataWithToken('package/itinerary/' + mpackage._id, data);
+        await updateDataWithToken('package/itinerary/' + mpackage._id, data, navigate);
         setEditId('');
         setTitle('');
         setDescription('');

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { DeleteOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
-import { base_url, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
+import { base_url, getData, postDataWithToken, updateDataWithToken } from '../../utils';
 import { Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateCategory = () => {
     interface Category {
@@ -12,68 +13,46 @@ const CreateCategory = () => {
         is_hidden: boolean,
         idx: number
     }
-    const [image, setImage] = React.useState<File | null>(null);
+    const navigate = useNavigate();
     const [title, setTitle] = React.useState<string>('');
     const [mesg, setMsg] = React.useState<string>();
     const [data, setData] = React.useState<Category[]>([]);
     const [open, setOpen] = React.useState<boolean>(false);
     const [cid, setCid] = React.useState<string>('');
     const [idx, setIDX] = React.useState<number | null>(null);
-    const handleimage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setImage(e.target.files[0]);
-        }
-    }
     const handletitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
     }
     const updatedata = async () => {
-        const formData = new FormData();
-        if (image) {
-            formData.append('image', image);
-        }
-        formData.append('title', title);
-        if (idx !== null) {
-            formData.append('idx', idx.toString());
-        }
-        try {
-            await formDataWithTokenUpdate('category/' + cid, formData).then(resp => {
-                setMsg(resp.message);
-                getdata();
-                setTitle('');
-                setImage(null);
-                setCid('');
-                setOpen(false);
-            })
 
+        try {
+            interface ApiResp { message: string, success: string }
+            const resp: ApiResp = await updateDataWithToken('category/' + cid, { title: title, idx: idx ?? false }, navigate);
+            setMsg(resp.message);
+            getdata();
+            setTitle('');
+            setCid('');
+            setOpen(false);
         } catch (error) {
             console.log(mesg)
             console.error('Error:', error);
         }
     }
     const postdata = async () => {
-        const formData = new FormData();
-        if (!image) {
-            setMsg("image is required");
-            return;
-        }
-        formData.append('image', image);
-        formData.append('title', title);
+        const data = { title: title }
         try {
-            await formDataWithToken('category', formData).then(resp => {
-                setMsg(resp.message);
-                getdata();
-                setTitle('');
-                setImage(null);
-            })
-
+            interface ApiResp { message: string; success: string; }
+            const resp: ApiResp = await postDataWithToken('category', data, navigate);
+            setMsg(resp.message);
+            getdata();
+            setTitle('');
         } catch (error) {
             console.log(mesg)
             console.error('Error:', error);
         }
     };
     const getdata = async () => {
-        await getData('category').then((resp) => {
+        await getData('category', navigate).then((resp) => {
             setData(resp.data);
         })
     }
@@ -125,10 +104,7 @@ const CreateCategory = () => {
                                     <label htmlFor="" className='form-label'>Enter Country</label>
                                     <input title='country' type="text" value={title} onChange={handletitle} className="form-control" />
                                 </div>
-                                <div className="form-group mb-4">
-                                    <label htmlFor="" className='form-label'> Upload Image</label>
-                                    <input title='image' type="file" onChange={handleimage} className="form-control" />
-                                </div>
+
                                 <div className="form-group">
                                     <button onClick={updatedata} className="w-full bg-primary text-white py-2 shadow-md shadow-blue-gray-200">Update Category</button>
                                 </div>
@@ -153,17 +129,12 @@ const CreateCategory = () => {
                         }
 
                         <div className="col-span-1">
-                            <label htmlFor="" className='form-label'>Enter Country</label>
-                            <input title='country' type="text" onChange={handletitle} className="form-control" />
-                        </div>
-                        <div className="col-span-1">
-                            <label htmlFor="" className='form-label'> Upload Image</label>
-                            <input title='image' type="file" onChange={handleimage} className="form-control" />
-
+                            <label htmlFor="" className='form-label'>Enter Category</label>
+                            <input title='category' type="text" value={title} onChange={handletitle} className="form-control" />
                         </div>
                         <div className="col-span-1">
                             <label htmlFor="" className='block mb-2'>&nbsp;</label>
-                            <button type='button' onClick={postdata} title='button' className="text-sm bg-primary px-4 uppercase font-light tracking-widest py-2 rounded-lg shadow-lg  text-white"><SaveOutlined /> Save Country</button>
+                            <button type='button' onClick={postdata} title='button' className="text-sm bg-primary px-4 uppercase font-light tracking-widest py-2 rounded-lg shadow-lg  text-white"><SaveOutlined /> Save Category</button>
                         </div>
                     </div>
                     <div className="w-full mt-10">
@@ -173,7 +144,6 @@ const CreateCategory = () => {
                                     <th>Sr No</th>
                                     <th>Country</th>
                                     <th>Image</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -187,9 +157,7 @@ const CreateCategory = () => {
                                                 <td>
                                                     {itm.title}
                                                 </td>
-                                                <td>
-                                                    <img src={base_url + itm.image} alt="" className="size-10 object-contain rounded-full" />
-                                                </td>
+
 
                                                 <td>
                                                     <div className="inline-flex gap-2">

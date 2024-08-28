@@ -25,7 +25,7 @@ const ViewCountry = () => {
     const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
 
     const getdata = async () => {
-        await getData('country').then((resp) => {
+        await getData('country', navigate).then((resp) => {
             setData(resp.data);
         })
     }
@@ -39,7 +39,7 @@ const ViewCountry = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('country/delete/' + deleteId);
+        await delete_data('country/delete/' + deleteId, navigate);
         getdata();
         setConfirmDelete(false) // Hide confirmation modal after delete
     }

@@ -13,6 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { formDataWithToken, getData } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 const PackageCreate: React.FC = () => {
     const scrollToRef = React.useRef<HTMLDivElement>(null);
@@ -43,9 +44,18 @@ const PackageCreate: React.FC = () => {
     const [images, setImages] = React.useState<File[]>([]);
     const [pdf, setPDF] = React.useState<File>();
     const [banner, setBanner] = React.useState<File>();
-    const [price, setPrice] = React.useState<number>(0)
+    const [price, setPrice] = React.useState<number>(0);
+    interface Catgry { title: string; _id: string; }
+    const [categories, setCategories] = React.useState<Catgry[]>([]);
+    const getcategories = async () => {
+        const item = await getData('category', navigate);
+        setCategories(item.data);
+    }
+
+    const navigate = useNavigate();
     const handledata = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+
         if (name == "days") {
             setDays(parseInt(value));
         }
@@ -75,7 +85,7 @@ const PackageCreate: React.FC = () => {
         }
     };
     const getdestinations = async () => {
-        const resp = await getData(`country/?show_only=${encodeURIComponent(JSON.stringify(['title']))}`)
+        const resp = await getData(`country/?show_only=${encodeURIComponent(JSON.stringify(['title']))}`, navigate)
         setDestinations(resp.data);
     }
     const handleEditorChange = (data: string) => {
@@ -145,7 +155,7 @@ const PackageCreate: React.FC = () => {
             newFormData.append('exclusion', exclusion || '');
             newFormData.append('itinerary', JSON.stringify(itines) || '[]');
 
-            const resp: ApiResponse = await formDataWithToken('package', newFormData);
+            const resp: ApiResponse = await formDataWithToken('package', newFormData, navigate);
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
@@ -161,6 +171,7 @@ const PackageCreate: React.FC = () => {
 
     useEffect(() => {
         getdestinations();
+        getcategories();
     }, []);
     return (
         <>
@@ -212,6 +223,21 @@ const PackageCreate: React.FC = () => {
                             <div className="w-full">
                                 <Label title={'Enter Package Title'} hfor={null} />
                                 <input type='text' value={title} onChange={(e) => setTitle(e.target.value)} className='w-full p-2 border border-blue-gray-200' placeholder='Enter Package title' />
+                            </div>
+                        </div>
+                        <div className="col-span-1">
+                            <div className="w-full">
+                                <Label title={'Select Category'} hfor={null} />
+                                <select name="" id="" className="rounded p-2 w-full text-xs border border-blue-gray-200 outline-none">
+                                    <option value="">---Select---</option>
+                                    {
+                                        categories.map(itm => (
+                                            <>
+                                                <option value={itm.title}>{itm.title}</option>
+                                            </>
+                                        ))
+                                    }
+                                </select>
                             </div>
                         </div>
 

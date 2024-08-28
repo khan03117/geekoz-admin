@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { getData, postDataWithToken } from '../../utils'
 import { Dialog, DialogBody, DialogHeader, Input } from '@material-tailwind/react';
 import { EditOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const ContactDetails = () => {
+    const navigate = useNavigate();
     interface Media {
         _id: string;
         title: string;
@@ -17,7 +19,7 @@ const ContactDetails = () => {
     const [type, setType] = useState<string>('');
     const [mid, setMid] = useState<string>('')
     const getdata = async () => {
-        const resp = await getData('social/contact-media');
+        const resp = await getData('social/contact-media', navigate);
         setData(resp.data);
     }
     const handletitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +37,7 @@ const ContactDetails = () => {
             type: type,
             media_value: nval
         }
-        await postDataWithToken('social/contact-media', { ...adata });
+        await postDataWithToken('social/contact-media', { ...adata }, navigate);
         setOpen(false);
         getdata();
         setNval('');
@@ -62,7 +64,7 @@ const ContactDetails = () => {
             type: type,
             media_value: nval,
         }
-        await postDataWithToken('social/contact-media', { ...udata });
+        await postDataWithToken('social/contact-media', { ...udata }, navigate);
         setOpen(false);
         setMid('');
         setNtitle('');

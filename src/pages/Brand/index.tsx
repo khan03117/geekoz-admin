@@ -2,9 +2,11 @@ import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
 import { base_url, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
 import { Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
+import { useNavigate } from 'react-router-dom';
 
 
 const Brand: React.FC = () => {
+    const navigate = useNavigate();
     interface ApiResponse {
         message: string,
         success: string
@@ -55,7 +57,7 @@ const Brand: React.FC = () => {
 
     }
     const getbrands = async () => {
-        await getData('brand').then(resp => {
+        await getData('brand', navigate).then(resp => {
             setBrand(resp.data)
         })
     }
@@ -78,7 +80,7 @@ const Brand: React.FC = () => {
             }
             formData.append('image', image);
             formData.append('title', title);
-            const resp: ApiResponse = await formDataWithToken('brand', formData);
+            const resp: ApiResponse = await formDataWithToken('brand', formData, navigate);
             if (!resp) {
                 console.log('error');
             }
@@ -100,7 +102,7 @@ const Brand: React.FC = () => {
 
     }
     const getdata = async () => {
-        await getData('category').then((resp) => {
+        await getData('category', navigate).then((resp) => {
             setCategories(resp.data);
         })
     }
@@ -127,7 +129,7 @@ const Brand: React.FC = () => {
         try {
             const formData = new FormData();
             formData.append('title', title);
-            await formDataWithTokenUpdate('brand/' + editId, formData).then((resp) => {
+            await formDataWithTokenUpdate('brand/' + editId, formData, navigate).then((resp) => {
                 if (resp) {
                     setEdit(!edit)
                     setTitle('')

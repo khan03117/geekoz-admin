@@ -1,7 +1,6 @@
 import React from 'react';
 
 interface ConfirmatPopupProps {
-
     onConfirm: () => void;
     onCancel: () => void;
 }

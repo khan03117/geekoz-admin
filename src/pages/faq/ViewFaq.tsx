@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
     Accordion,
     AccordionHeader,
@@ -8,6 +8,7 @@ import {
 import { delete_data, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
 const ViewFaq: React.FC = () => {
+    const navigate = useNavigate();
     interface FAQ {
         _id: string;
         question: string;
@@ -17,12 +18,12 @@ const ViewFaq: React.FC = () => {
     const [faqs, setFaq] = useState<FAQ[]>([]);
     const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
     const getdata = async () => {
-        await getData('faq').then(resp => {
+        await getData('faq', navigate).then(resp => {
             setFaq(resp.data);
         })
     }
     const handledelete = async (id: string) => {
-        await delete_data('faq/' + id);
+        await delete_data('faq/' + id, navigate);
         getdata();
     }
     useEffect(() => {
@@ -35,7 +36,6 @@ const ViewFaq: React.FC = () => {
                     <Link to={'/faq/create'} className="px-4 py-2 text-sm bg-primary text-white">Create New</Link>
                 </div>
                 <div className="w-full">
-
                     {
                         faqs.length > 0 && faqs.map((faq, index) => (
                             <>

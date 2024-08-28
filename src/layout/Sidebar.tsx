@@ -1,132 +1,4 @@
-// import { BranchesOutlined, ContactsOutlined, EnvironmentOutlined, FileImageOutlined, FileOutlined, GiftOutlined, InfoCircleFilled, LogoutOutlined, MessageOutlined, OrderedListOutlined, ProductFilled, ProductOutlined, QuestionOutlined, TagsOutlined, WindowsOutlined } from '@ant-design/icons'
-// // import { Collapse } from '@material-tailwind/react'
-// // import React from 'react'
-// import { Link } from 'react-router-dom'
-
-// const Sidebar = () => {
-
-
-//     // const [open, setOpen] = React.useState('');
-//     // const handleopen = (str: string) => {
-//     //     if (open != str) {
-//     //         setOpen(str);
-//     //     } else {
-//     //         setOpen('')
-//     //     }
-//     // }
-
-//     const logout = () => {
-//         localStorage.clear();
-//         window.location.reload();
-//     }
-//     return (
-//         <>
-//             <div className="w-full rounded-e-3xl h-[100%] overflow-x-hidden overflow-y-auto relative bg-white border border-primary ">
-
-
-//                 <ul className='masterdata_ul mb-20  *:py-1 px-3 *:text-sm *:font-light *:text-primary  *:tracking-wider'>
-//                     <li>
-//                         <Link to={'/dashboard'} className='w-full  py-2 ps-3 text-start block rounded-lg bg-primary text-white'>
-//                             <WindowsOutlined /> <span className="ms-5 font-bold">
-//                                 Dashboard
-//                             </span>
-//                         </Link>
-//                     </li>
-//                     <li className='my-4 py-4'>
-//                         <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Master Data</h4>
-//                     </li>
-//                     <li>
-//                         <Link to={'/region'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <EnvironmentOutlined />  <span className="ms-5">Region </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/countries'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <OrderedListOutlined />  <span className="ms-5">Destinations </span>
-//                         </Link>
-//                     </li>
-
-//                     <li>
-//                         <Link to={'/activity'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <BranchesOutlined />  <span className="ms-5">Activity </span>
-//                         </Link>
-//                     </li>
-
-//                     <li>
-//                         <Link to={'/promo-code'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <GiftOutlined /> <span className="ms-5">Promo Code </span>
-//                         </Link>
-//                     </li>
-
-
-//                     <li className='my-4 py-4'>
-//                         <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Web Management</h4>
-//                     </li>
-//                     <li>
-//                         <Link to={'/banner'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <FileImageOutlined /> <span className="ms-5">Banner </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/testimonial'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <MessageOutlined />   <span className="ms-5">Testimonial </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/contact-details'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <ContactsOutlined />   <span className="ms-5">Social Contact </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/policy'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <FileOutlined />   <span className="ms-5">Policy </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/faq'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <InfoCircleFilled />   <span className="ms-5">Faq </span>
-//                         </Link>
-//                     </li>
-//                     <li className='my-4 py-4'>
-//                         <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Package Management</h4>
-//                     </li>
-//                     <li>
-//                         <Link to={'/packages/create'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <ProductOutlined />   <span className="ms-5">Add Package </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/packages'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <ProductFilled />   <span className="ms-5">View Packages </span>
-//                         </Link>
-//                     </li>
-//                     <li className='hidden'>
-//                         <Link to={'/offer'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <TagsOutlined />   <span className="ms-5">Offer </span>
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link to={'/enquire'} className='w-full  py-2 px-4 block bg-opacity-30 rounded-lg'>
-//                             <QuestionOutlined />   <span className="ms-5">Enquires </span>
-//                         </Link>
-//                     </li>
-
-//                 </ul>
-//                 <div className="w-full bg-white h-auto  inline-block pt-3 border-t border-blue-gray-500">
-//                     <button onClick={logout} className='w-full py-2 text-start text-secondary px-4 block bg-opacity-30 rounded-lg'>
-//                         <LogoutOutlined />  <span className="ms-5">Logout </span>
-//                     </button>
-//                 </div>
-//             </div>
-//         </>
-//     )
-// }
-
-// export default Sidebar
-
-
-
-import { useLocation, Link } from 'react-router-dom';
+// import { useLocation, Link } from 'react-router-dom';
 import {
     BranchesOutlined,
     ContactsOutlined,
@@ -134,6 +6,7 @@ import {
     FileImageOutlined,
     FileOutlined,
     GiftOutlined,
+    GroupOutlined,
     InfoCircleFilled,
     LogoutOutlined,
     MessageOutlined,
@@ -144,102 +17,73 @@ import {
     TagsOutlined,
     WindowsOutlined
 } from '@ant-design/icons';
+import SideLink from './SideLink';
 
 const Sidebar = () => {
-    const location = useLocation();
+
 
     const logout = () => {
         localStorage.clear();
         window.location.reload();
     }
 
-    const getLinkClass = (path: string) => {
-        return location.pathname === path || (location.pathname === '/' && path === '/dashboard')
-            ? 'w-full py-3 px-4 block bg-primary text-white rounded-lg'
-            : 'w-full py-3 px-4 block bg-opacity-30 rounded-lg';
-    }
 
     return (
         <div className="w-full rounded-e-3xl h-[100%] overflow-x-hidden overflow-y-auto relative bg-white border border-primary">
             <ul className='masterdata_ul mb-20 py-1 px-3 text-sm font-light text-primary tracking-wider'>
                 <li>
-                    <Link to='/dashboard' className={getLinkClass('/dashboard')}>
-                        <WindowsOutlined /> <span className="ms-5 font-bold">Dashboard</span>
-                    </Link>
+                    <SideLink title={'Dashboard'} link={'dashboard'} icon={<WindowsOutlined />} />
                 </li>
                 <li className='my-4 py-4'>
                     <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Master Data</h4>
                 </li>
                 <li>
-                    <Link to='/region' className={getLinkClass('/region')}>
-                        <EnvironmentOutlined /> <span className="ms-5">Region</span>
-                    </Link>
+                    <SideLink title={'Region'} link={'region'} icon={<EnvironmentOutlined />} />
                 </li>
                 <li>
-                    <Link to='/countries' className={getLinkClass('/countries')}>
-                        <OrderedListOutlined /> <span className="ms-5">Destinations</span>
-                    </Link>
+                    <SideLink title={'Destinations'} link={'countries'} icon={<OrderedListOutlined />} />
                 </li>
                 <li>
-                    <Link to='/activity' className={getLinkClass('/activity')}>
-                        <BranchesOutlined /> <span className="ms-5">Activity</span>
-                    </Link>
+                    <SideLink title={'Category'} link={'category'} icon={<GroupOutlined />} />
                 </li>
                 <li>
-                    <Link to='/promo-code' className={getLinkClass('/promo-code')}>
-                        <GiftOutlined /> <span className="ms-5">Promo Code</span>
-                    </Link>
+                    <SideLink title={'Activity'} link={'activity'} icon={<BranchesOutlined />} />
+                </li>
+                <li>
+                    <SideLink title={'Promo Code'} link={'promo-code'} icon={<GiftOutlined />} />
                 </li>
                 <li className='my-4 py-4'>
                     <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Web Management</h4>
                 </li>
                 <li>
-                    <Link to='/banner' className={getLinkClass('/banner')}>
-                        <FileImageOutlined /> <span className="ms-5">Banner</span>
-                    </Link>
+                    <SideLink title={'Banner'} link={'banner'} icon={<FileImageOutlined />} />
                 </li>
                 <li>
-                    <Link to='/testimonial' className={getLinkClass('/testimonial')}>
-                        <MessageOutlined /> <span className="ms-5">Testimonial</span>
-                    </Link>
+                    <SideLink title={'Testimonial'} link={'testimonial'} icon={<MessageOutlined />} />
                 </li>
                 <li>
-                    <Link to='/contact-details' className={getLinkClass('/contact-details')}>
-                        <ContactsOutlined /> <span className="ms-5">Social Contact</span>
-                    </Link>
+                    <SideLink title={'Social Contact'} link={'contact-details'} icon={<ContactsOutlined />} />
                 </li>
                 <li>
-                    <Link to='/policy' className={getLinkClass('/policy')}>
-                        <FileOutlined /> <span className="ms-5">Policy</span>
-                    </Link>
+                    <SideLink title={'Policy'} link={'policy'} icon={<FileOutlined />} />
                 </li>
                 <li>
-                    <Link to='/faq' className={getLinkClass('/faq')}>
-                        <InfoCircleFilled /> <span className="ms-5">Faq</span>
-                    </Link>
+                    <SideLink title={'Faq'} link={'faq'} icon={<InfoCircleFilled />} />
                 </li>
                 <li className='my-4 py-4'>
                     <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Package Management</h4>
                 </li>
                 <li>
-                    <Link to='/packages/create' className={getLinkClass('/packages/create')}>
-                        <ProductOutlined /> <span className="ms-5">Add Package</span>
-                    </Link>
+                    <SideLink title={'Add Package'} link={'packages/create'} icon={<ProductOutlined />} />
                 </li>
                 <li>
-                    <Link to='/packages' className={getLinkClass('/packages')}>
-                        <ProductFilled /> <span className="ms-5">View Packages</span>
-                    </Link>
+                    <SideLink title={'View Package'} link={'packages'} icon={<ProductFilled />} />
                 </li>
                 <li className='hidden'>
-                    <Link to='/offer' className={getLinkClass('/offer')}>
-                        <TagsOutlined /> <span className="ms-5">Offer</span>
-                    </Link>
+                    <SideLink title={'Offer'} link={'offer'} icon={<TagsOutlined />} />
                 </li>
                 <li>
-                    <Link to='/enquire' className={getLinkClass('/enquire')}>
-                        <QuestionOutlined /> <span className="ms-5">Enquires</span>
-                    </Link>
+                    <SideLink title={'Enquires'} link={'enquire'} icon={<QuestionOutlined />} />
                 </li>
             </ul>
             <div className="w-full bg-white h-auto inline-block pt-3 border-t border-blue-gray-500">

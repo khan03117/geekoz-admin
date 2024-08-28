@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { base_url, delete_data, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
-
+import { useNavigate } from 'react-router-dom';
 import { Collapse, Input, Textarea } from '@material-tailwind/react';
 import ConfirmPopup from '../../layout/ConfirmPopup';
 
@@ -25,7 +25,7 @@ const Activity: React.FC = () => {
     const [description, setDescription] = useState('');
     const [deleteId, setDeleteId] = React.useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
-
+    const navigate = useNavigate();
     const handlefile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setImage(e.target.files[0]);
@@ -39,7 +39,7 @@ const Activity: React.FC = () => {
             if (image) {
                 Fdat.append('image', image);
             }
-            const rsp: API = await formDataWithToken('activity', Fdat);
+            const rsp: API = await formDataWithToken('activity', Fdat, navigate);
             getdata();
             setMessage(rsp.message)
             setStatus(rsp.success);
@@ -55,7 +55,7 @@ const Activity: React.FC = () => {
             if (image) {
                 Fdat.append('image', image);
             }
-            const rsp: API = await formDataWithTokenUpdate('seller/' + editid, Fdat);
+            const rsp: API = await formDataWithTokenUpdate('seller/' + editid, Fdat, navigate);
             getdata();
             setMessage(rsp.message)
             setStatus(rsp.success);
@@ -68,7 +68,7 @@ const Activity: React.FC = () => {
 
     }
     const getdata = async () => {
-        await getData('activity').then((resp) => {
+        await getData('activity', navigate).then((resp) => {
             setSellers(resp.data);
         })
     }
@@ -90,7 +90,7 @@ const Activity: React.FC = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('activity/' + deleteId);
+        await delete_data('activity/' + deleteId, navigate);
         getdata();
 
 

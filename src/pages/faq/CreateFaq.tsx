@@ -1,9 +1,10 @@
 import { Input, Textarea } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { postDataWithToken } from '../../utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CreateFaq: React.FC = () => {
+    const navigate = useNavigate();
     const [faq, setFaq] = useState<string>('');
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState<string>('');
@@ -17,7 +18,7 @@ const CreateFaq: React.FC = () => {
                 question: faq,
                 answer: description
             }
-            const resp: ApiResponse = await postDataWithToken('faq', data);
+            const resp: ApiResponse = await postDataWithToken('faq', data, navigate);
             setMessage(resp.message);
             setTimeout(() => {
                 setMessage('')

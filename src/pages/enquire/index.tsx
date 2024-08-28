@@ -1,6 +1,7 @@
 import React from 'react'
 import { delete_data, getData } from '../../utils';
 import ConfirmPopup from '../../layout/ConfirmPopup';
+import { useNavigate } from 'react-router-dom';
 
 const Enquire = () => {
     interface Enquire {
@@ -10,11 +11,12 @@ const Enquire = () => {
         mobile: string;
         destination: string;
     }
+    const navigate = useNavigate();
     const [enquires, setEnquired] = React.useState<Enquire[]>([]);
     const [deleteId, setDeleteId] = React.useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
     const getdata = async () => {
-        const items = await getData('enquire');
+        const items = await getData('enquire', navigate);
         setEnquired(items.data);
     }
     React.useEffect(() => {
@@ -28,7 +30,7 @@ const Enquire = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('enquire/' + deleteId);
+        await delete_data('enquire/' + deleteId, navigate);
         getdata();
 
 

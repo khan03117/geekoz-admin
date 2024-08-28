@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Label from './Label'
 import CkeditorCom from '../../layout/CkeditorCom';
-
-
 import { getData, updateDataWithToken } from '../../utils';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditPackage: React.FC = () => {
     const { url } = useParams();
     const scrollToRef = React.useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
     interface Destination {
         _id: string;
         title: string;
@@ -57,7 +56,7 @@ const EditPackage: React.FC = () => {
     }
     const [mpackage, setPackage] = React.useState<Package>();
     const getpackage = async () => {
-        const item = await getData('package/show/' + url);
+        const item = await getData('package/show/' + url, navigate);
         setPackage(item.data);
     }
     useEffect(() => {
@@ -107,7 +106,7 @@ const EditPackage: React.FC = () => {
     }
 
     const getdestinations = async () => {
-        const resp = await getData(`country/?show_only=${encodeURIComponent(JSON.stringify(['title']))}`)
+        const resp = await getData(`country/?show_only=${encodeURIComponent(JSON.stringify(['title']))}`, navigate)
         setDestinations(resp.data);
     }
     const handleEditorChange = (data: string) => {
@@ -133,7 +132,7 @@ const EditPackage: React.FC = () => {
             const newFormData = { ...fdata, about: editorData, inclusion: inclusion, exclusion: exclusion }
 
 
-            const resp: ApiResponse = await updateDataWithToken('package/' + mpackage?._id, newFormData);
+            const resp: ApiResponse = await updateDataWithToken('package/' + mpackage?._id, newFormData, navigate);
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
