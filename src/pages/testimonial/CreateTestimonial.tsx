@@ -6,7 +6,9 @@ import { base_url, delete_data, formDataWithToken, getData, updateDataWithToken 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Switch } from '@material-tailwind/react';
 import ConfirmPopup from '../../layout/ConfirmPopup';
+import { useNavigate } from 'react-router-dom';
 const CreateTestimonial = () => {
+    const navigate = useNavigate();
     interface ASK {
         _id: string;
         name: string;
@@ -42,7 +44,7 @@ const CreateTestimonial = () => {
         Fdata.append('description', description);
         Fdata.append('subject', subject);
         Fdata.append('rating', rating.toString());
-        await formDataWithToken('testimonial', Fdata).then((resp) => {
+        await formDataWithToken('testimonial', Fdata, navigate).then((resp) => {
             if (resp) {
                 getdata();
                 setMsg(resp?.message);
@@ -56,12 +58,12 @@ const CreateTestimonial = () => {
     };
 
     const getdata = async () => {
-        await getData('testimonial/admin').then((resp) => {
+        await getData('testimonial/admin', navigate).then((resp) => {
             setData(resp.data);
         })
     }
     const handleshow = async (id: string) => {
-        await updateDataWithToken('testimonial/show-control/' + id, {});
+        await updateDataWithToken('testimonial/show-control/' + id, {}, navigate);
         getdata();
     }
     useEffect(() => {
@@ -73,7 +75,7 @@ const CreateTestimonial = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('testimonial/' + deleteId).then(resp => {
+        await delete_data('testimonial/' + deleteId, navigate).then(resp => {
             if (resp) {
                 getdata();
                 setMsg(resp?.message);

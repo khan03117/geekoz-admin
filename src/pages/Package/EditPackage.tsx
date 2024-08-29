@@ -132,7 +132,7 @@ const EditPackage: React.FC = () => {
             const newFormData = { ...fdata, about: editorData, inclusion: inclusion, exclusion: exclusion }
 
 
-            const resp: ApiResponse = await updateDataWithToken('package/' + mpackage?._id, newFormData, navigate);
+            const resp: ApiResponse = await updateDataWithToken('package/update/' + mpackage?._id, newFormData, navigate);
             setStatus(resp.success);
             setMessage(resp.message);
             setTimeout(() => {
@@ -159,7 +159,7 @@ const EditPackage: React.FC = () => {
         setPrice(mpackage?.price ?? 0);
         setTitle(mpackage?.title ?? "");
         setPackageType(mpackage?.package_type ?? "");
-        setDestination(mpackage?.destination._id ?? "");
+        setDestination(mpackage?.destination?._id ?? "");
         setFdata({
             about: mpackage?.about,
             days: mpackage?.days,
@@ -168,7 +168,7 @@ const EditPackage: React.FC = () => {
             title: mpackage?.title,
             price: mpackage?.price,
             package_type: mpackage?.package_type,
-            destination: mpackage?.destination._id
+            destination: mpackage?.destination?._id
         });
     }, [mpackage])
     if (!mpackage) {

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Label from '../Package/Label'
 import { getData, postDataWithToken, updateDataWithToken } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 const Region: React.FC = () => {
+    const navigate = useNavigate();
     interface Region {
         _id: string;
         region: string;
@@ -12,7 +14,7 @@ const Region: React.FC = () => {
     const [regions, setRegions] = useState<Region[]>([]);
     const [message, setMessage] = useState<string>('')
     const getdata = async () => {
-        const items = await getData('region');
+        const items = await getData('region', navigate);
         setRegions(items.data);
     }
     const handleedit = (id: string) => {
@@ -25,9 +27,9 @@ const Region: React.FC = () => {
     const handledata = async () => {
         const url = editid ? 'region/' + editid : 'region';
         if (editid) {
-            await updateDataWithToken(url, { region: region })
+            await updateDataWithToken(url, { region: region }, navigate)
         } else {
-            await postDataWithToken(url, { region: region });
+            await postDataWithToken(url, { region: region }, navigate);
         }
         getdata();
         setEditId('');

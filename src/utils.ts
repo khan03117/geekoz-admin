@@ -45,8 +45,7 @@ export const getData = async (endpoint: string, navigate: ReturnType<typeof useN
 
 export const postData = async <T, R>(
     endpoint: string,
-    data: T,
-    navigate: ReturnType<typeof useNavigate>
+    data: T
 ): Promise<R> => {
     try {
 
@@ -58,7 +57,12 @@ export const postData = async <T, R>(
             },
             body: JSON.stringify(data)
         });
-        return await handleResponse(response, navigate);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const respo = await response.json();
+        return respo;
     } catch (error) {
         console.error(error);
         throw error;
