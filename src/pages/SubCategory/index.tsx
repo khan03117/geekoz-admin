@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react'
 import '@smastrom/react-rating/style.css'
 import { base_url, delete_data, formDataWithToken, formDataWithTokenUpdate, getData } from '../../utils';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 const SubCategory = () => {
+    const navigate = useNavigate();
     interface ASK {
         _id: string;
         image: string;
@@ -58,7 +60,7 @@ const SubCategory = () => {
         Fdata.append('description', desc);
 
         if (editid) {
-            await formDataWithTokenUpdate(`subcategory/${editid}`, Fdata).then((resp) => {
+            await formDataWithTokenUpdate(`subcategory/${editid}`, Fdata, navigate).then((resp) => {
                 if (resp) {
                     getdata();
                     setMsg(resp?.message);
@@ -71,7 +73,7 @@ const SubCategory = () => {
                 }
             })
         } else {
-            await formDataWithToken('subcategory', Fdata).then((resp) => {
+            await formDataWithToken('subcategory', Fdata, navigate).then((resp) => {
                 if (resp) {
                     getdata();
                     setMsg(resp?.message);
@@ -85,7 +87,7 @@ const SubCategory = () => {
         }
     };
     const deletesubcategory = async (id: string) => {
-        await delete_data('subcategory/' + id).then(resp => {
+        await delete_data('subcategory/' + id, navigate).then(resp => {
             if (resp) {
                 getdata();
                 setMsg(resp?.message);
@@ -108,12 +110,12 @@ const SubCategory = () => {
 
 
     const getdata = async () => {
-        await getData('subcategory').then((resp) => {
+        await getData('subcategory', navigate).then((resp) => {
             setData(resp.data);
         })
     }
     const getcategory = async () => {
-        await getData('category').then((resp) => {
+        await getData('category', navigate).then((resp) => {
             setcategorydata(resp.data);
 
         })

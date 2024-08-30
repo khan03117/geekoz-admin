@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { getData, delete_data, base_url, formDataWithTokenUpdate, postDataWithToken, updateDataWithToken } from '../../utils';
-import { CloseOutlined, DownloadOutlined, FileImageFilled, PaperClipOutlined } from '@ant-design/icons';
-import { json, Link, useNavigate } from 'react-router-dom';
+import { CloseOutlined, DownloadOutlined, FileImageFilled } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
 import ConfirmPopup from '../../layout/ConfirmPopup';
 import { Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
 import moment from 'moment';
@@ -61,10 +61,10 @@ const ViewPackages: React.FC = () => {
     const [imgid, setimgid] = React.useState<string>('');
 
     const [editImg, setEditImg] = React.useState<File[]>([]);
-    const [editState, setEditState] = React.useState({ rowIndex: null, dateIndex: null, value: '' });
+    const [editState, setEditState] = React.useState({ rowIndex: -1, dateIndex: '', value: '' });
 
     // Handle the start of editing
-    const handleEditStart = (rowIndex: any, dateIndex: any, currentDate: string) => {
+    const handleEditStart = (rowIndex: number, dateIndex: string, currentDate: string) => {
         setEditState({
             rowIndex,
             dateIndex,
@@ -80,7 +80,7 @@ const ViewPackages: React.FC = () => {
         const item = await updateDataWithToken('package/update-date/group-datessss', data, navigate);
         console.log(item);
         console.log(dateIndex);
-        setEditState({ rowIndex: null, dateIndex: null, value: '' });
+        setEditState({ rowIndex: -2, dateIndex: '', value: '' });
         get_dates();
     }
 
@@ -98,10 +98,8 @@ const ViewPackages: React.FC = () => {
 
     }
 
-    const handleimgopen = (id: string) => {
-
+    const handleimgopen = () => {
         setimgeditopen(!imgeditopen);
-
     }
     useEffect(() => {
         if (pid) {
@@ -170,7 +168,7 @@ const ViewPackages: React.FC = () => {
                 formData.append(`images`, file);
             });
 
-            const resp = await formDataWithTokenUpdate('package/galleryimage/' + imgid, formData, navigate);
+            await formDataWithTokenUpdate('package/galleryimage/' + imgid, formData, navigate);
 
             setimgeditopen(false)
             getpackages()
@@ -215,60 +213,6 @@ const ViewPackages: React.FC = () => {
 
     };
 
-
-    const handleSave = async () => {
-        return false;
-        // Create a deep copy of the dates to compare with
-        const originalDates = [...dates];
-
-        // Map through the dates to apply the updates
-        const updatedDates = dates.map((item, rowIdx) => {
-            if (rowIdx === editState.rowIndex) {
-                const updatedDatesArray = item.dates.map((date, dateIdx) => {
-                    if (dateIdx === editState.dateIndex) {
-                        return editState.value; // Update with the new value
-                    }
-                    return date;
-                });
-                return { ...item, dates: updatedDatesArray, _id: item._id }; // Ensure to include the _id for each item
-            }
-            return item;
-        });
-
-        // Identify changed dates by comparing with the original
-        const changedDates = updatedDates.filter((item, rowIdx) => {
-            return originalDates[rowIdx] &&
-                originalDates[rowIdx].dates.some((date, dateIdx) => {
-                    return date !== updatedDates[rowIdx].dates[dateIdx];
-                });
-        });
-
-        // Extract IDs of the changed dates
-        console.log(changedDates)
-        const updateRequests = {
-            _id: changedDates[0]._id,
-            dates: changedDates[0].dates
-        }
-
-        console.log(updateRequests);
-
-        // Send only changed dates to the server
-        try {
-            // Assuming updateDataWithToken can handle array of updates
-            let res = await updateDataWithToken('package/update-date/group-datessss', updateRequests, navigate);
-            console.log(res);
-        } catch (error) {
-            console.error('Update failed:', error);
-        }
-
-        // Reset the edit state
-        setEditState({ rowIndex: null, dateIndex: null, value: '' });
-    };
-
-
-
-
-
     return (
         <>
 
@@ -307,14 +251,14 @@ const ViewPackages: React.FC = () => {
 
                                                             <td>
                                                                 {itm.dates.map((dt, dateIdx) => (
-                                                                    editState.rowIndex === idx && editState.dateIndex === dateIdx ? (
+                                                                    editState.rowIndex === idx && editState.dateIndex === dateIdx.toString() ? (
                                                                         <>
 
                                                                             <input
                                                                                 key={dateIdx}
                                                                                 type="date"
                                                                                 value={editState.value}
-                                                                                onChange={(e) => handleInputChange(dt?.id, dateIdx, e.target.value)}
+                                                                                onChange={(e) => handleInputChange(dt?.id, dateIdx.toString(), e.target.value)}
 
                                                                                 className="border rounded px-2 py-1"
                                                                             />
@@ -323,7 +267,7 @@ const ViewPackages: React.FC = () => {
                                                                         <span
                                                                             key={dateIdx}
                                                                             className="me-2 cursor-pointer"
-                                                                            onClick={() => handleEditStart(idx, dateIdx, dt.dt)}
+                                                                            onClick={() => handleEditStart(idx, dateIdx.toString(), dt.dt)}
                                                                         >
                                                                             {moment(dt.dt).format('DD-MMM-YYYY')}
                                                                         </span>
@@ -345,7 +289,7 @@ const ViewPackages: React.FC = () => {
             {
                 imgeditopen && (
                     <>
-                        <Dialog open={imgeditopen} handler={() => handleimgopen('')} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                        <Dialog open={imgeditopen} handler={() => handleimgopen()} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                             <DialogHeader placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                 Package Gallery Image
                             </DialogHeader>

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CkeditorCom from '../../layout/CkeditorCom'
 import { getData, postDataWithToken } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePolicy = () => {
+    const navigate = useNavigate();
     const goref = useRef<HTMLDivElement>(null)
     interface ApiResponse {
         success: string;
@@ -52,7 +54,7 @@ const CreatePolicy = () => {
             title: title,
             description: editorData
         }
-        const resp: ApiResponse = await postDataWithToken('policy', data);
+        const resp: ApiResponse = await postDataWithToken('policy', data, navigate);
         setTimeout(() => {
             if (goref.current) {
                 goref.current.scrollIntoView({ block: 'start' });
@@ -63,7 +65,7 @@ const CreatePolicy = () => {
         getdata()
     }
     const getdata = async () => {
-        const resp = await getData('policy');
+        const resp = await getData('policy', navigate);
         setPolicies(resp.data);
     }
     useEffect(() => {

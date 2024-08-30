@@ -4,6 +4,7 @@ import '@smastrom/react-rating/style.css'
 import { delete_data, getData, postDataWithToken } from '../../utils';
 import { DeleteOutlined } from '@ant-design/icons';
 import ConfirmPopup from '../../layout/ConfirmPopup';
+import { useNavigate } from 'react-router-dom';
 const PromoCodes = () => {
     interface ASK {
         _id: string;
@@ -29,8 +30,9 @@ const PromoCodes = () => {
     const [discount_type, setDiscountType] = useState<string>('Percent');
     const [deleteId, setDeleteId] = React.useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
-
+    const navigate = useNavigate();
     const save_data = async () => {
+
         const Fdata = {
             code_for: 'All',
             promo_code: promocode,
@@ -40,7 +42,7 @@ const PromoCodes = () => {
             discount_type: discount_type
 
         }
-        await postDataWithToken('promocode', Fdata).then((resp) => {
+        await postDataWithToken('promocode', Fdata, navigate).then((resp) => {
             if (resp) {
                 getdata();
 
@@ -69,7 +71,7 @@ const PromoCodes = () => {
 
 
     const getdata = async () => {
-        await getData('promocode').then((resp) => {
+        await getData('promocode', navigate).then((resp) => {
             setData(resp.data);
         })
     }
@@ -83,7 +85,7 @@ const PromoCodes = () => {
     }
 
     const handleDeleteConfirmed = async () => {
-        await delete_data('promocode/' + deleteId);
+        await delete_data('promocode/' + deleteId, navigate);
         getdata();
 
 
