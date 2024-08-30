@@ -2,14 +2,11 @@ import { useNavigate } from 'react-router-dom';
 export const getToken = () => localStorage.getItem('atoken');
 export const base_url = "https://punaah.in:5002/";
 // export const base_url = "https://localhost:5002/";
-
 export const token = localStorage.getItem('atoken');
-
 interface ApiResponse {
     message: string;
     success: string;
 }
-
 const handleResponse = async (response: Response, navigate: ReturnType<typeof useNavigate>) => {
     if (response.status === 401) {
         // Token might be expired, redirect to login
