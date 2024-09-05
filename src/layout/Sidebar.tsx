@@ -18,6 +18,7 @@ import {
     WindowsOutlined
 } from '@ant-design/icons';
 import SideLink from './SideLink';
+import { BiSolidCategory } from "react-icons/bi";
 
 const Sidebar = () => {
 
@@ -84,6 +85,12 @@ const Sidebar = () => {
                 </li>
                 <li>
                     <SideLink title={'Enquires'} link={'enquire'} icon={<QuestionOutlined />} />
+                </li>
+                <li className='my-4 py-4'>
+                    <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Ticket Management</h4>
+                </li>
+                <li>
+                    <SideLink title={'Ticket Categories'} link={'ticket-category'} icon={<BiSolidCategory />} />
                 </li>
             </ul>
             <div className="w-full bg-white h-auto inline-block pt-3 border-t border-blue-gray-500">

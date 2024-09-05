@@ -9,8 +9,8 @@ const SideLink: React.FC<Prop> = ({ title, link, icon, }) => {
     const location = useLocation();
     const getLinkClass = (path: string) => {
         return location.pathname === path
-            ? 'w-full py-3 px-4 block bg-primary text-white rounded-lg'
-            : 'w-full py-3 px-4 block bg-opacity-30 rounded-lg';
+            ? 'w-full py-3 px-4 flex gap-2 items-center bg-primary text-white rounded-lg'
+            : 'w-full py-3 px-4 flex gap-2 items-center bg-opacity-30 rounded-lg';
     }
     return (
         <>

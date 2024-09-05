@@ -23,6 +23,9 @@ import Enquire from './pages/enquire'
 import EditPackage from './pages/Package/EditPackage'
 import Itinerary from './pages/Package/Itinerary'
 import CreateCategory from './pages/Category/CreateCategory'
+import TicketCategory from './pages/Ticket/TicketCategory'
+import CreateTicket from './pages/Ticket/CreateTicket'
+import CreateHotZone from './pages/hotzone/CreateHotZone'
 
 
 
@@ -56,6 +59,10 @@ function App() {
           <Route path='/packages/itinerary/:url' element={<Itinerary />} />
           <Route path='/region' element={<Region />} />
           <Route path='/enquire' element={<Enquire />} />
+          <Route path='/ticket-category' element={<TicketCategory />} />
+          <Route path='/tickets/create' element={<CreateTicket />} />
+          <Route path='/hotzone/create' element={<CreateHotZone />} />
+
         </Route>
       </>
     )

@@ -4,6 +4,8 @@ import Header from './Header'
 import Footer from './Footer'
 import { Outlet, useNavigate } from 'react-router-dom'
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 const Layout: React.FC = () => {
@@ -26,6 +28,18 @@ const Layout: React.FC = () => {
     return (
         <>
 
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <div className={`w-full h-lvh overflow-hidden`}>
                 <Header />
                 <div className="flex">

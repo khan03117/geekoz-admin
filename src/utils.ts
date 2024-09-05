@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 export const getToken = () => localStorage.getItem('atoken');
-export const base_url = "https://punaah.in:5002/";
-// export const base_url = "https://localhost:5002/";
+// export const base_url = "https://punaah.in:5002/";
+export const base_url = "https://localhost:5002/";
 export const token = localStorage.getItem('atoken');
 interface ApiResponse {
     message: string;
@@ -168,3 +168,4 @@ export const delete_data = async (endpoint: string, navigate: ReturnType<typeof 
         throw error;
     }
 };
+export const formcontrol = "rounded w-full text-blue-gray-900 outline-none border border-blue-gray-200 text-sm p-2";
