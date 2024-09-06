@@ -1,15 +1,36 @@
 import React from 'react'
-import FormLabel from '../../layout/FormLabel'
-import { formcontrol, formDataWithToken, getData } from '../../utils'
-import { useNavigate } from 'react-router-dom'
-import CkeditorCom from '../../layout/CkeditorCom'
-import { toast } from 'react-toastify'
+import { useNavigate, useParams } from 'react-router-dom';
+import { base_url, formcontrol, formDataWithToken, getData } from '../../utils';
+import { toast } from 'react-toastify';
+import FormLabel from '../../layout/FormLabel';
+import CkeditorCom from '../../layout/CkeditorCom';
 
-const CreateTicket: React.FC = () => {
+const EditTicket: React.FC = () => {
+    const { id } = useParams();
     const scrollToRef = React.useRef<HTMLDivElement>(null);
     interface Destination {
         _id: string;
         title: string;
+    }
+    interface Ticket {
+        _id: string;
+        title: string;
+        description: string;
+        category: {
+            _id: string;
+            title: string;
+        }
+        destination: {
+            _id: string;
+            title: string;
+        },
+        location: string;
+        google_map: string;
+        images: {
+            _id: string;
+            path: string
+        }[]
+
     }
     const navigate = useNavigate();
     const [message, setMessage] = React.useState<string>('');
@@ -24,6 +45,7 @@ const CreateTicket: React.FC = () => {
     const [category, setCategory] = React.useState('');
     const [google_map, setGoogleMap] = React.useState('');
     const [location, setLocation] = React.useState('');
+    const [ticket, setTicket] = React.useState<Ticket>();
     interface Plist { entery_type: string, overall_price: string, adult_price: string, child_price: string }
     const [formData, setFormData] = React.useState<Plist[]>([
         { entery_type: '', overall_price: '', adult_price: '', child_price: '' }
@@ -35,7 +57,10 @@ const CreateTicket: React.FC = () => {
             newFormData[index][field] = value;
             setFormData(newFormData);
         }
+
     };
+
+
     const handleIncreseCount = () => {
         setFormData([...formData, { entery_type: '', overall_price: '', adult_price: '', child_price: '' }]);
         setCount(count + 1);
@@ -57,10 +82,26 @@ const CreateTicket: React.FC = () => {
     const handleEditorChange = (data: string) => {
         setEditorData(data);
     };
+    const getTicket = async () => {
+        const item = await getData('ticket?id=' + id, navigate);
+        setTicket(item.data);
+    }
     React.useEffect(() => {
+        getTicket();
         getdestinations()
         getcats();
     }, []);
+    React.useEffect(() => {
+        if (ticket) {
+            setTitle(ticket?.title);
+            setDestination(ticket?.destination?._id)
+            setCategory(ticket?.category?._id);
+            setEditorData(ticket?.description);
+            setLocation(ticket?.location);
+            setGoogleMap(ticket?.google_map);
+        }
+
+    }, [ticket])
     interface ApiResp { success: string, message: string }
     const submitForm = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -94,8 +135,16 @@ const CreateTicket: React.FC = () => {
             setMessage(resp.message);
         }
     }
+
+
+
+
+    if (!ticket) {
+        return "Loading....";
+    }
     return (
         <>
+
             <section className="h-5" ref={scrollToRef} ></section>
             <section className="">
                 <div className="container">
@@ -124,7 +173,7 @@ const CreateTicket: React.FC = () => {
                                     {
                                         destinations.length > 0 && destinations.map((des) => (
                                             <>
-                                                <option value={des._id}>{des.title}</option>
+                                                <option value={des._id} selected={destination == des._id} >{des.title}</option>
                                             </>
                                         ))
                                     }
@@ -137,7 +186,7 @@ const CreateTicket: React.FC = () => {
                                     {
                                         cats.map((itm) => (
                                             <>
-                                                <option value={itm._id}>{itm.title}</option>
+                                                <option value={itm._id} selected={category == itm._id}>{itm.title}</option>
                                             </>
                                         ))
                                     }
@@ -146,6 +195,15 @@ const CreateTicket: React.FC = () => {
                             <div className="col-span-2">
                                 <FormLabel label={'Select images'} />
                                 <input type="file" name="images" onChange={handleFileChange} id="" className={formcontrol} multiple />
+                                <div className="flex gap-2 flex-wrap">
+                                    {
+                                        ticket.images.map((img) => (
+                                            <>
+                                                <img src={ base_url +  img.path} alt="" className="w-24" />
+                                            </>
+                                        ))
+                                    }
+                                </div>
                             </div>
 
                             <div className="col-span-4">
@@ -219,6 +277,7 @@ const CreateTicket: React.FC = () => {
             </section>
         </>
     )
+
 }
 
-export default CreateTicket
+export default EditTicket

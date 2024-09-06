@@ -10,7 +10,6 @@ import CreatePolicy from './pages/policy/CreatePolicy'
 import Login from './pages/Login'
 import PromoCodes from './pages/PromoCode'
 import SubCategory from './pages/SubCategory'
-
 import CreateFaq from './pages/faq/CreateFaq'
 import ViewFaq from './pages/faq/ViewFaq'
 import Country from './pages/Country'
@@ -26,6 +25,8 @@ import CreateCategory from './pages/Category/CreateCategory'
 import TicketCategory from './pages/Ticket/TicketCategory'
 import CreateTicket from './pages/Ticket/CreateTicket'
 import CreateHotZone from './pages/hotzone/CreateHotZone'
+import ViewTickets from './pages/Ticket/ViewTickets'
+import EditTicket from './pages/Ticket/EditTicket'
 
 
 
@@ -62,7 +63,8 @@ function App() {
           <Route path='/ticket-category' element={<TicketCategory />} />
           <Route path='/tickets/create' element={<CreateTicket />} />
           <Route path='/hotzone/create' element={<CreateHotZone />} />
-
+          <Route path='/tickets' element={<ViewTickets/>}/>
+          <Route path='/tickets/edit/:id' element={<EditTicket/>}/>
         </Route>
       </>
     )

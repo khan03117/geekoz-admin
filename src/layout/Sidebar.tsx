@@ -19,6 +19,7 @@ import {
 } from '@ant-design/icons';
 import SideLink from './SideLink';
 import { BiSolidCategory } from "react-icons/bi";
+import { GiTicket } from "react-icons/gi";
 
 const Sidebar = () => {
 
@@ -91,6 +92,9 @@ const Sidebar = () => {
                 </li>
                 <li>
                     <SideLink title={'Ticket Categories'} link={'ticket-category'} icon={<BiSolidCategory />} />
+                </li>
+                <li>
+                    <SideLink title={'Tickets'} link={'tickets'} icon={<GiTicket />} />
                 </li>
             </ul>
             <div className="w-full bg-white h-auto inline-block pt-3 border-t border-blue-gray-500">
