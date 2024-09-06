@@ -1,9 +1,10 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import { base_url, formcontrol, formDataWithToken, getData } from '../../utils';
+import { base_url, delete_data, formcontrol, formDataWithToken, getData } from '../../utils';
 import { toast } from 'react-toastify';
 import FormLabel from '../../layout/FormLabel';
 import CkeditorCom from '../../layout/CkeditorCom';
+import { CloseOutlined } from '@ant-design/icons';
 
 const EditTicket: React.FC = () => {
     const { id } = useParams();
@@ -29,6 +30,11 @@ const EditTicket: React.FC = () => {
         images: {
             _id: string;
             path: string
+        }[],
+        pricing : {
+            _id : string,
+            entery_type: string, overall_price: string, adult_price: string, child_price: string
+
         }[]
 
     }
@@ -99,10 +105,15 @@ const EditTicket: React.FC = () => {
             setEditorData(ticket?.description);
             setLocation(ticket?.location);
             setGoogleMap(ticket?.google_map);
+            setFormData(ticket.pricing)
         }
 
     }, [ticket])
     interface ApiResp { success: string, message: string }
+    const removeImage = async(img_id : string) => {
+        await delete_data('ticket/images/delete/'+img_id+"/"+id, navigate);
+        getTicket();
+    }
     const submitForm = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         const fdata = new FormData();
@@ -118,8 +129,9 @@ const EditTicket: React.FC = () => {
             });
         }
         fdata.append('pricing', JSON.stringify(formData));
-        const resp: ApiResp = await formDataWithToken('ticket', fdata, navigate);
-        console.log(resp)
+        const resp: ApiResp = await formDataWithToken('ticket/update/'+id, fdata, navigate);
+        getTicket();
+
         toast.success(resp.message ?? 'Ticket create successfully', {
             position: "top-right",
             autoClose: 5000,
@@ -195,11 +207,17 @@ const EditTicket: React.FC = () => {
                             <div className="col-span-2">
                                 <FormLabel label={'Select images'} />
                                 <input type="file" name="images" onChange={handleFileChange} id="" className={formcontrol} multiple />
-                                <div className="flex gap-2 flex-wrap">
+                                <div className="flex  gap-2 flex-wrap">
                                     {
                                         ticket.images.map((img) => (
                                             <>
-                                                <img src={ base_url +  img.path} alt="" className="w-24" />
+                                            <div className="size-24 relative">
+
+                                            <button onClick={() => removeImage(img._id)} className='absolute top-1 end-1 size-5 rounded-full bg-white  z-50'>
+                                                <CloseOutlined/>
+                                            </button>
+                                                <img src={ base_url +  img.path} alt="" className="size-24 object-cover border border-blue-gray-300" />
+                                                </div>
                                             </>
                                         ))
                                     }

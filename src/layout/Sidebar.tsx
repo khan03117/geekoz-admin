@@ -5,6 +5,7 @@ import {
     EnvironmentOutlined,
     FileImageOutlined,
     FileOutlined,
+    FunctionOutlined,
     GiftOutlined,
     GroupOutlined,
     InfoCircleFilled,
@@ -89,6 +90,9 @@ const Sidebar = () => {
                 </li>
                 <li className='my-4 py-4'>
                     <h4 className="text-deep-orange-900 ps-3 font-bold text-md">Ticket Management</h4>
+                </li>
+                <li>
+                    <SideLink title={'Hot Zone'} link={'hotzone'} icon={<FunctionOutlined />} />
                 </li>
                 <li>
                     <SideLink title={'Ticket Categories'} link={'ticket-category'} icon={<BiSolidCategory />} />

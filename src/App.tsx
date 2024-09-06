@@ -27,6 +27,7 @@ import CreateTicket from './pages/Ticket/CreateTicket'
 import CreateHotZone from './pages/hotzone/CreateHotZone'
 import ViewTickets from './pages/Ticket/ViewTickets'
 import EditTicket from './pages/Ticket/EditTicket'
+import ViewHotZone from './pages/hotzone/ViewHotZone'
 
 
 
@@ -63,6 +64,7 @@ function App() {
           <Route path='/ticket-category' element={<TicketCategory />} />
           <Route path='/tickets/create' element={<CreateTicket />} />
           <Route path='/hotzone/create' element={<CreateHotZone />} />
+          <Route path='/hotzone' element={<ViewHotZone />} />
           <Route path='/tickets' element={<ViewTickets/>}/>
           <Route path='/tickets/edit/:id' element={<EditTicket/>}/>
         </Route>
