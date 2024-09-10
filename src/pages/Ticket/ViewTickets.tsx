@@ -1,6 +1,6 @@
 import React from 'react'
 import { getData } from '../../utils';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ViewTickets: React.FC = () => {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const ViewTickets: React.FC = () => {
         const item = await getData('ticket', navigate);
         setTickets(item.data);
     }
-    const editTicket = async (id : string)=> {
+    const editTicket = async (id: string) => {
         navigate(`/tickets/edit/${id}`);
     }
     React.useEffect(() => {
@@ -34,7 +34,11 @@ const ViewTickets: React.FC = () => {
         <>
             <section>
                 <div className="container">
+                    <div className='w-full mb-4'>
+                        <Link to={'/tickets/create'} className="bg-primary rounded text-white px-4 py-2">Add New</Link>
+                    </div>
                     <div className="w-full">
+
                         <table className="w-full">
                             <thead>
                                 <tr className='*:text-start  *:bg-primary *:text-white *:border *:border-blue-gray-300 *:p-2'>
@@ -71,8 +75,8 @@ const ViewTickets: React.FC = () => {
                                                     {ticket.location}
                                                 </td>
                                                 <td>
-                                                    <button onClick={()=> editTicket(ticket._id)} className='bg-secondary text-xs text-white rounded p-2'>
-                                                    
+                                                    <button onClick={() => editTicket(ticket._id)} className='bg-secondary text-xs text-white rounded p-2'>
+
                                                         Edit</button>
                                                     <button className='bg-primary rounded p-2 text-white ms-3 text-xs'>Delete</button>
                                                 </td>

@@ -6,7 +6,14 @@ import { useNavigate } from 'react-router-dom'
 const CreateHotZone: React.FC = () => {
     const navigate = useNavigate();
     const [file, setFile] = React.useState<File>();
+    const [image, setImage] = React.useState<File>();
     const [url, setUrl] = React.useState('');
+    const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (files && files.length > 0) {
+            setImage(files[0]);
+        }
+    };
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
         if (files && files.length > 0) {
@@ -18,7 +25,10 @@ const CreateHotZone: React.FC = () => {
         const fdta = new FormData();
         fdta.append('url', url);
         if (file) {
-            fdta.append('image', file);
+            fdta.append('file', file);
+        }
+        if (image) {
+            fdta.append('cover', image);
         }
         await formDataWithToken('hot-zone', fdta, navigate);
 
@@ -28,7 +38,19 @@ const CreateHotZone: React.FC = () => {
         <>
             <section>
                 <div className="container">
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-5 gap-4">
+                        <div className="col-span-1">
+                            <FormLabel label={'Select Section'} />
+                            <select name="" id="" className={formcontrol}>
+                                <option value="">---Select---</option>
+                                <option value="hotzone">HotZone</option>
+                                <option value="testimonial">Testimonial</option>
+                            </select>
+                        </div>
+                        <div className="col-span-1">
+                            <FormLabel label={'Select Cover Image'} />
+                            <input type="file" onChange={handleCoverChange} name="image" id="image" className={formcontrol} accept='.jpg, .png, .jpeg' />
+                        </div>
                         <div className="col-span-1">
                             <FormLabel label={'Select Media File'} />
                             <input type="file" onChange={handleFileChange} name="" id="" className={formcontrol} />
